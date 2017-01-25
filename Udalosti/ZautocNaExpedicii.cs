@@ -1,19 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Glad.Udalosti
 {
     public class ZautocNaExpedicii : Udalost
     {
-        public ZautocNaExpedicii(TimeSpan cas, WebBrowser webBrowser)
+        private readonly string _monstrum;
+
+        public ZautocNaExpedicii(TimeSpan cas, WebBrowser webBrowser, string monstrum)
         {
             CasSimulacie = cas;
             wb = webBrowser;
             TypAktivity = TypAktivityEnum.ZautocNaExpedicii;
+            _monstrum = monstrum;
         }
 
         public override void Vykonaj()
@@ -23,7 +22,8 @@ namespace Glad.Udalosti
             foreach (HtmlElement item in c)
             {
                 Console.WriteLine(item.OuterText);
-                if (item.OuterText == "Praveký jašter ")
+                //if (item.OuterText == "Praveký jašter ")
+                if (item.OuterText.Contains(_monstrum))
                 {
                     najdeny = true;
                 }

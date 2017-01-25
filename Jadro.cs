@@ -14,12 +14,18 @@ namespace Glad
         public bool Naplanova { get; set; }
         public int Zlato { get; set; }
 
+        public string Monstrum { get; set; }
+        public string Lokacia { get; set; }
+
         private readonly WebBrowser wb;
-        private TimeSpan simCas;
+        public TimeSpan SimCas;
         public bool SimulaciaBezi;
 
         public delegate void ZmenaKalendarUdalostiHandler();
         public event ZmenaKalendarUdalostiHandler ZmenaKalendarUdalosti;
+
+        public delegate void ZmenaSimCasuHandler();
+        public event ZmenaSimCasuHandler ZmenaSimCasu;
 
 
         public List<Ponuka> listPonuk;
@@ -59,14 +65,16 @@ namespace Glad
             }
         }
 
-        public void SpustSimulaciu()
+        public void SpustSimulaciu(string[] lokacia)
         {
-            simCas = new TimeSpan(0,0,0,0,0);
+            SimCas = new TimeSpan(0,0,0,0,0);
             KalendarUdalosti = new SortedList<TimeSpan, Udalost>();
             Naplanova = true;
+            Lokacia = lokacia[0].Trim();
+            Monstrum = lokacia[1].Trim();
 
-            var simCasUdalosti = simCas + new TimeSpan(0, 0, 5);
-            KalendarUdalosti.Add(simCasUdalosti, new NacitajLokaciu(simCasUdalosti, wb));
+            var simCasUdalosti = SimCas + new TimeSpan(0, 0, 5);
+            KalendarUdalosti.Add(simCasUdalosti, new NacitajLokaciu(simCasUdalosti, wb, Lokacia));
 
             SpustBehSimulacie();
 
@@ -80,15 +88,18 @@ namespace Glad
 
             while (SimulaciaBezi)
             {
-                Console.WriteLine(simCas + "  --  " + KalendarUdalosti.Values.Count);
-                if (simCas.Equals(KalendarUdalosti.First().Value.CasSimulacie))
+                Console.WriteLine(SimCas + "  --  " + KalendarUdalosti.Values.Count);
+                if (SimCas.Equals(KalendarUdalosti.First().Value.CasSimulacie))
                 {
                     KalendarUdalosti.First().Value.Vykonaj();
                     Naplanova = true;
                 }
 
-                simCas = simCas.Add(new TimeSpan(0,0,0,0,100));
+                SimCas = SimCas.Add(new TimeSpan(0,0,0,0,100));
                 await PutTaskDelay();
+               
+                if (ZmenaSimCasu != null)
+                    ZmenaSimCasu();
             }
 
             SimulaciaBezi = false;
@@ -128,13 +139,13 @@ namespace Glad
 
         private void NasledujucaPoNacitajItemVAukcii()
         {
-            var simCasUdalosti = simCas + new TimeSpan(0, 0, 5);
+            var simCasUdalosti = SimCas + new TimeSpan(0, 0, 5);
             KalendarUdalosti.Add(simCasUdalosti, new PonukniNaAukcii(simCasUdalosti, wb));
         }
 
         private void NasledujucaPoNacitajAukcnuBudovu()
         {
-            var simCasUdalosti = simCas + new TimeSpan(0, 0, 2);
+            var simCasUdalosti = SimCas + new TimeSpan(0, 0, 2);
             KalendarUdalosti.Add(simCasUdalosti, new NacitajItemVAukcii(simCasUdalosti, wb));
         }
 
@@ -142,8 +153,8 @@ namespace Glad
         {
             Random rand = new Random();
 
-            var simCasUdalosti = simCas + new TimeSpan(0, 5, 10 + rand.Next(50));
-            KalendarUdalosti.Add(simCasUdalosti, new NacitajLokaciu(simCasUdalosti, wb));
+            var simCasUdalosti = SimCas + new TimeSpan(0, 5, 10 + rand.Next(50));
+            KalendarUdalosti.Add(simCasUdalosti, new NacitajLokaciu(simCasUdalosti, wb, Lokacia));
 
             //if (Zlato > 25800)
             //{
@@ -154,14 +165,21 @@ namespace Glad
 
         private void NasledujucaPoNacitajLokaciu()
         {
-            var simCasUdalosti = simCas + new TimeSpan(0, 0, 5);
-            KalendarUdalosti.Add(simCasUdalosti, new ZautocNaExpedicii(simCasUdalosti, wb));
+            var simCasUdalosti = SimCas + new TimeSpan(0, 0, 5);
+            KalendarUdalosti.Add(simCasUdalosti, new ZautocNaExpedicii(simCasUdalosti, wb, Monstrum));
         }
 
         internal string ZistiStavZlata()
         {
             Zlato = int.Parse(wb.Document.GetElementById("sstat_gold_val").InnerText.Replace(".", ""));
             return Zlato.ToString();
+        }
+
+        public string[] LoadLokacie()
+        {
+            string[] lines = System.IO.File.ReadAllLines(@"Data\\Lokacie.txt");
+
+            return lines;
         }
     }
 }

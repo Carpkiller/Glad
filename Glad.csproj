@@ -64,7 +64,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Udalosti\NacitajLokaciu.cs" />
     <Compile Include="Udalosti\RefreshStranky.cs" />
-    <Compile Include="TypAktivityEnum.cs" />
+    <Compile Include="Enums\TypAktivityEnum.cs" />
     <Compile Include="Udalost.cs" />
     <Compile Include="Udalosti\ZautocNaExpedicii.cs" />
     <EmbeddedResource Include="HlavneOkno.resx">
@@ -91,6 +91,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Data\Lokacie.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

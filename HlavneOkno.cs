@@ -38,6 +38,10 @@ namespace Glad
 
             _jadro = new Jadro(webBrowser1);
             _jadro.ZmenaKalendarUdalosti += AktualizujKalendarUdalosti;
+            _jadro.ZmenaSimCasu += AktualizujSimCas;
+
+            comboBoxLokacia.DataSource = _jadro.LoadLokacie();
+            toolStripStatusLabel1.Text = "";
         }
 
         private void AktualizujKalendarUdalosti()
@@ -48,6 +52,11 @@ namespace Glad
             {
                 textBox1.AppendText(string.Format("{0} - {1}{2}", udalost.CasSimulacie, udalost.TypAktivity, Environment.NewLine));
             }
+        }
+
+        private void AktualizujSimCas()
+        {
+            toolStripStatusLabel1.Text = _jadro.SimCas.ToString("g");
         }
 
         // prihlasenie
@@ -140,7 +149,7 @@ namespace Glad
 
         private void button3_Click(object sender, EventArgs e)
         {
-            _jadro.SpustSimulaciu();
+            _jadro.SpustSimulaciu(comboBoxLokacia.SelectedItem.ToString().Split('-'));
         }
 
         private void button4_Click(object sender, EventArgs e)

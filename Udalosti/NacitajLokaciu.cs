@@ -1,20 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Glad.Udalosti
 {
     public class NacitajLokaciu : Udalost
     {
+        private readonly String _lokacia;
 
-        public NacitajLokaciu(TimeSpan cas, WebBrowser webBrowser)
+        public NacitajLokaciu(TimeSpan cas, WebBrowser webBrowser, string lokacia)
         {
             CasSimulacie = cas;
             wb = webBrowser;
             TypAktivity = TypAktivityEnum.NacitajLokaciu;
+            _lokacia = lokacia;
         }
 
         public override void Vykonaj()
@@ -23,8 +21,7 @@ namespace Glad.Udalosti
             foreach (HtmlElement item in c)
             {
                 Console.WriteLine(item.OuterText);
-                //if (item.OuterText == "Tábor Teutónov ")
-                if (item.OuterText == "Baňa ")
+                if (item.OuterText.Contains(_lokacia))
                 {
                     item.InvokeMember("Click");
                 }
