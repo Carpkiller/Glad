@@ -23,7 +23,7 @@ namespace Glad.Udalosti
             {
                 Console.WriteLine(item.OuterText);
                 //if (item.OuterText == "Praveký jašter ")
-                if (item.OuterText.Contains(_monstrum))
+                if (item.OuterText != null && item.OuterText.Contains(_monstrum))
                 {
                     najdeny = true;
                 }

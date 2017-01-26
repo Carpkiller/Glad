@@ -9,11 +9,13 @@ namespace Glad.Udalosti
 {
     public class NacitajItemVAukcii : Udalost
     {
-        public NacitajItemVAukcii(TimeSpan cas, WebBrowser webBrowser)
+        string Index;
+        public NacitajItemVAukcii(TimeSpan cas, WebBrowser webBrowser, string index)
         {
             CasSimulacie = cas;
             wb = webBrowser;
             TypAktivity = TypAktivityEnum.NacitajItemVAukcii;
+            Index = index;
         }
 
         public override void Vykonaj()
@@ -28,7 +30,7 @@ namespace Glad.Udalosti
                 // prstene - 6
                 // amulety - 9
                 //var index = comboBox1.SelectedIndex == 0 ? "9" : "6";
-                var index = "9";
+                var index = Index;
 
                 if (value.Equals(index))
                     option.SetAttribute("selected", "selected");

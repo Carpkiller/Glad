@@ -52,8 +52,11 @@
       <DependentUpon>HlavneOkno.cs</DependentUpon>
     </Compile>
     <Compile Include="Jadro.cs" />
+    <Compile Include="Udalosti\AktivujElixir.cs" />
     <Compile Include="Udalosti\NacitajAukcnuBudovu.cs" />
+    <Compile Include="Udalosti\NacitajInventar.cs" />
     <Compile Include="Udalosti\NacitajItemVAukcii.cs" />
+    <Compile Include="Udalosti\NacitajPremium.cs" />
     <Compile Include="Udalosti\PonukniNaAukcii.cs" />
     <Compile Include="Udalosti_old\KlikKontakt.cs" />
     <Compile Include="Udalosti_old\KlikLogo.cs" />

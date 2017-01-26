@@ -21,7 +21,7 @@ namespace Glad.Udalosti
             foreach (HtmlElement item in c)
             {
                 Console.WriteLine(item.OuterText);
-                if (item.OuterText.Contains(_lokacia))
+                if (item.OuterText != null && item.OuterText.Contains(_lokacia))
                 {
                     item.InvokeMember("Click");
                 }

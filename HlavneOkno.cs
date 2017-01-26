@@ -139,6 +139,9 @@ namespace Glad
         private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
             label3.Text = _jadro.ZistiStavZlata();
+            label7.Text = _jadro.ZistiPocetExpBodov();
+            label9.Text = _jadro.ZistiPocetZivotov();
+            _jadro.UkladajZlato = checkBox1.Checked;
                        
 
             if (_jadro.SimulaciaBezi && _jadro.Naplanova)

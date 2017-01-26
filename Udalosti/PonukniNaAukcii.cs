@@ -11,12 +11,14 @@ namespace Glad.Udalosti
     {
         List<Ponuka> listPonuk;
         List<System.Windows.Forms.HtmlElement> listElementov;
+        Jadro _jadro;
 
-        public PonukniNaAukcii(TimeSpan cas, WebBrowser webBrowser)
+        public PonukniNaAukcii(TimeSpan cas, WebBrowser webBrowser, Jadro jadro)
         {
             CasSimulacie = cas;
             wb = webBrowser;
             TypAktivity = TypAktivityEnum.PonukniNaAukcii;
+            _jadro = jadro;
         }
 
         public override void Vykonaj()
@@ -30,8 +32,11 @@ namespace Glad.Udalosti
                 {
                     var tlacPonukni = listElementov[i];
                     tlacPonukni.InvokeMember("Click");
+                    _jadro.JePonuknute = true;
+                    return;
                 }
             }
+            _jadro.JePonuknute = false;
         }
 
         internal void ParsujItemy(System.Windows.Forms.HtmlElementCollection inputHtml)
@@ -53,7 +58,7 @@ namespace Glad.Udalosti
                         var najnizsiaPonuka = y[10].Split(':')[1].Trim().Replace(".", "");
                         var cena = y[12].Split(' ')[1].Replace(".", "");
 
-                        listPonuk.Add(new Ponuka("", najnizsiaPonuka, cena, divs[7].GetElementsByTagName("a").Count == 0 || divs[7].GetElementsByTagName("span").Count == 0));
+                        listPonuk.Add(new Ponuka(cena, najnizsiaPonuka, cena, divs[7].GetElementsByTagName("a").Count == 0 && divs[7].GetElementsByTagName("span").Count == 0));
                         listElementov.Add(tt[7]);
                     }
                 }
