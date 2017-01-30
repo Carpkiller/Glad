@@ -56,17 +56,17 @@
             this.label12 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.checkBoxKlikajExpedicie = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.checkBoxKlikajZalar = new System.Windows.Forms.CheckBox();
-            this.checkBoxKlikajArenu = new System.Windows.Forms.CheckBox();
-            this.checkBoxKlikajProvinciu = new System.Windows.Forms.CheckBox();
+            this.checkBoxJeKostym = new System.Windows.Forms.CheckBox();
             this.checkBoxJeModZarabaci = new System.Windows.Forms.CheckBox();
             this.checkBoxJeModPrieskum = new System.Windows.Forms.CheckBox();
             this.checkBoxTurmaProv = new System.Windows.Forms.CheckBox();
             this.checkBoxKlikajTurmu = new System.Windows.Forms.CheckBox();
-            this.checkBoxKlikajExpedicie = new System.Windows.Forms.CheckBox();
-            this.checkBoxJeKostym = new System.Windows.Forms.CheckBox();
+            this.checkBoxKlikajProvinciu = new System.Windows.Forms.CheckBox();
+            this.checkBoxKlikajArenu = new System.Windows.Forms.CheckBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.checkBoxKlikajZalar = new System.Windows.Forms.CheckBox();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -334,6 +334,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.checkBoxKlikajExpedicie);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.comboBoxLokacia);
@@ -344,8 +345,22 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Expedicie";
             // 
+            // checkBoxKlikajExpedicie
+            // 
+            this.checkBoxKlikajExpedicie.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxKlikajExpedicie.AutoSize = true;
+            this.checkBoxKlikajExpedicie.Checked = true;
+            this.checkBoxKlikajExpedicie.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxKlikajExpedicie.Location = new System.Drawing.Point(8, 24);
+            this.checkBoxKlikajExpedicie.Name = "checkBoxKlikajExpedicie";
+            this.checkBoxKlikajExpedicie.Size = new System.Drawing.Size(99, 17);
+            this.checkBoxKlikajExpedicie.TabIndex = 40;
+            this.checkBoxKlikajExpedicie.Text = "Klikaj expedicie";
+            this.checkBoxKlikajExpedicie.UseVisualStyleBackColor = true;
+            // 
             // groupBox2
             // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.checkBoxJeKostym);
             this.groupBox2.Controls.Add(this.checkBoxJeModZarabaci);
             this.groupBox2.Controls.Add(this.checkBoxJeModPrieskum);
@@ -360,52 +375,16 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Areny";
             // 
-            // groupBox3
+            // checkBoxJeKostym
             // 
-            this.groupBox3.Controls.Add(this.checkBoxKlikajZalar);
-            this.groupBox3.Location = new System.Drawing.Point(1090, 135);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(303, 46);
-            this.groupBox3.TabIndex = 38;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Zalare";
-            // 
-            // checkBoxKlikajZalar
-            // 
-            this.checkBoxKlikajZalar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBoxKlikajZalar.AutoSize = true;
-            this.checkBoxKlikajZalar.Location = new System.Drawing.Point(6, 19);
-            this.checkBoxKlikajZalar.Name = "checkBoxKlikajZalar";
-            this.checkBoxKlikajZalar.Size = new System.Drawing.Size(76, 17);
-            this.checkBoxKlikajZalar.TabIndex = 39;
-            this.checkBoxKlikajZalar.Text = "Klikaj zalar";
-            this.checkBoxKlikajZalar.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxKlikajArenu
-            // 
-            this.checkBoxKlikajArenu.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBoxKlikajArenu.AutoSize = true;
-            this.checkBoxKlikajArenu.Checked = true;
-            this.checkBoxKlikajArenu.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxKlikajArenu.Location = new System.Drawing.Point(6, 30);
-            this.checkBoxKlikajArenu.Name = "checkBoxKlikajArenu";
-            this.checkBoxKlikajArenu.Size = new System.Drawing.Size(81, 17);
-            this.checkBoxKlikajArenu.TabIndex = 39;
-            this.checkBoxKlikajArenu.Text = "Klikaj arenu";
-            this.checkBoxKlikajArenu.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxKlikajProvinciu
-            // 
-            this.checkBoxKlikajProvinciu.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBoxKlikajProvinciu.AutoSize = true;
-            this.checkBoxKlikajProvinciu.Checked = true;
-            this.checkBoxKlikajProvinciu.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxKlikajProvinciu.Location = new System.Drawing.Point(6, 53);
-            this.checkBoxKlikajProvinciu.Name = "checkBoxKlikajProvinciu";
-            this.checkBoxKlikajProvinciu.Size = new System.Drawing.Size(97, 17);
-            this.checkBoxKlikajProvinciu.TabIndex = 40;
-            this.checkBoxKlikajProvinciu.Text = "Klikaj provinciu";
-            this.checkBoxKlikajProvinciu.UseVisualStyleBackColor = true;
+            this.checkBoxJeKostym.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxJeKostym.AutoSize = true;
+            this.checkBoxJeKostym.Location = new System.Drawing.Point(172, 103);
+            this.checkBoxJeKostym.Name = "checkBoxJeKostym";
+            this.checkBoxJeKostym.Size = new System.Drawing.Size(60, 17);
+            this.checkBoxJeKostym.TabIndex = 43;
+            this.checkBoxJeKostym.Text = "Kostym";
+            this.checkBoxJeKostym.UseVisualStyleBackColor = true;
             // 
             // checkBoxJeModZarabaci
             // 
@@ -453,29 +432,53 @@
             this.checkBoxKlikajTurmu.Text = "Klikaj turmu";
             this.checkBoxKlikajTurmu.UseVisualStyleBackColor = true;
             // 
-            // checkBoxKlikajExpedicie
+            // checkBoxKlikajProvinciu
             // 
-            this.checkBoxKlikajExpedicie.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBoxKlikajExpedicie.AutoSize = true;
-            this.checkBoxKlikajExpedicie.Checked = true;
-            this.checkBoxKlikajExpedicie.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxKlikajExpedicie.Location = new System.Drawing.Point(8, 24);
-            this.checkBoxKlikajExpedicie.Name = "checkBoxKlikajExpedicie";
-            this.checkBoxKlikajExpedicie.Size = new System.Drawing.Size(99, 17);
-            this.checkBoxKlikajExpedicie.TabIndex = 40;
-            this.checkBoxKlikajExpedicie.Text = "Klikaj expedicie";
-            this.checkBoxKlikajExpedicie.UseVisualStyleBackColor = true;
+            this.checkBoxKlikajProvinciu.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxKlikajProvinciu.AutoSize = true;
+            this.checkBoxKlikajProvinciu.Checked = true;
+            this.checkBoxKlikajProvinciu.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxKlikajProvinciu.Location = new System.Drawing.Point(6, 53);
+            this.checkBoxKlikajProvinciu.Name = "checkBoxKlikajProvinciu";
+            this.checkBoxKlikajProvinciu.Size = new System.Drawing.Size(97, 17);
+            this.checkBoxKlikajProvinciu.TabIndex = 40;
+            this.checkBoxKlikajProvinciu.Text = "Klikaj provinciu";
+            this.checkBoxKlikajProvinciu.UseVisualStyleBackColor = true;
             // 
-            // checkBoxJeKostym
+            // checkBoxKlikajArenu
             // 
-            this.checkBoxJeKostym.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBoxJeKostym.AutoSize = true;
-            this.checkBoxJeKostym.Location = new System.Drawing.Point(172, 103);
-            this.checkBoxJeKostym.Name = "checkBoxJeKostym";
-            this.checkBoxJeKostym.Size = new System.Drawing.Size(60, 17);
-            this.checkBoxJeKostym.TabIndex = 43;
-            this.checkBoxJeKostym.Text = "Kostym";
-            this.checkBoxJeKostym.UseVisualStyleBackColor = true;
+            this.checkBoxKlikajArenu.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxKlikajArenu.AutoSize = true;
+            this.checkBoxKlikajArenu.Checked = true;
+            this.checkBoxKlikajArenu.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxKlikajArenu.Location = new System.Drawing.Point(6, 30);
+            this.checkBoxKlikajArenu.Name = "checkBoxKlikajArenu";
+            this.checkBoxKlikajArenu.Size = new System.Drawing.Size(81, 17);
+            this.checkBoxKlikajArenu.TabIndex = 39;
+            this.checkBoxKlikajArenu.Text = "Klikaj arenu";
+            this.checkBoxKlikajArenu.UseVisualStyleBackColor = true;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Controls.Add(this.checkBoxKlikajZalar);
+            this.groupBox3.Location = new System.Drawing.Point(1090, 135);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(303, 46);
+            this.groupBox3.TabIndex = 38;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Zalare";
+            // 
+            // checkBoxKlikajZalar
+            // 
+            this.checkBoxKlikajZalar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxKlikajZalar.AutoSize = true;
+            this.checkBoxKlikajZalar.Location = new System.Drawing.Point(6, 19);
+            this.checkBoxKlikajZalar.Name = "checkBoxKlikajZalar";
+            this.checkBoxKlikajZalar.Size = new System.Drawing.Size(76, 17);
+            this.checkBoxKlikajZalar.TabIndex = 39;
+            this.checkBoxKlikajZalar.Text = "Klikaj zalar";
+            this.checkBoxKlikajZalar.UseVisualStyleBackColor = true;
             // 
             // HlavneOkno
             // 

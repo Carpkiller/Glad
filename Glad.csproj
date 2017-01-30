@@ -75,9 +75,6 @@
     <Compile Include="Udalosti\PonukniNaAukcii.cs" />
     <Compile Include="Udalosti\ZautocVArene.cs" />
     <Compile Include="Udalosti\ZautocVTurme.cs" />
-    <Compile Include="Udalosti_old\KlikKontakt.cs" />
-    <Compile Include="Udalosti_old\KlikLogo.cs" />
-    <Compile Include="Udalosti_old\KlikZlavy.cs" />
     <Compile Include="MouseEvents.cs" />
     <Compile Include="Ponuka.cs" />
     <Compile Include="Program.cs" />

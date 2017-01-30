@@ -361,6 +361,14 @@ namespace Glad
             {
                 return NajblizsiLevel(protivnici);
             }
+            else
+            {
+                var najlepsiHrac = NajviacZlataZHraca(db);
+                if (najlepsiHrac.Premia == "40194")
+                {
+                    return protivnici.Find(x => x.MenoHraca == najlepsiHrac.Protivnik);
+                }
+            }
 
             if (JeModPrieskum)
             {
@@ -407,9 +415,9 @@ namespace Glad
 
             foreach (var protivnik in protivnici)
             {
-                if (int.Parse(protivnik.Premia) > max)
+                if (int.Parse(protivnik.Premia.Replace(".","")) >= max)
                 {
-                    max = int.Parse(protivnik.Premia);
+                    max = int.Parse(protivnik.Premia.Replace(".", ""));
                     hladanyHrac = protivnik;
                 }
             }
