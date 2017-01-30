@@ -2,6 +2,7 @@
 {
     public enum TypAktivityEnum
     {
+        InicializacnaUdalost,
         NacitajLokaciu,
         ZautocNaExpedicii,
         NacitajItemVAukcii,
@@ -10,6 +11,9 @@
         NacitajInventar,
         NacitajPremium,
         AktivujElixir,
+        NacitajArenu,
+        NacitajArenuProvinciarum,
+        ZautocVArene,
         Refresh
     }
 }

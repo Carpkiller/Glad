@@ -1,4 +1,7 @@
-﻿Baňa  -  Strážnik
+﻿Tmavé lesy - Potkan
+Tmavé lesy - Rys
+Tmavé lesy - Vlk
+Baňa  -  Strážnik
 Baňa  -  Draug
 Baňa  -  Kamenný golem
 Baňa  -  Praveký jašter

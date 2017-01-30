@@ -34,7 +34,6 @@ namespace Glad
         {
             ChangeUserAgent();
             InitializeComponent();
-            comboBox1.SelectedIndex = 0;
 
             _jadro = new Jadro(webBrowser1);
             _jadro.ZmenaKalendarUdalosti += AktualizujKalendarUdalosti;
@@ -100,9 +99,9 @@ namespace Glad
 
                 // prstene - 6
                 // amulety - 9
-                var index = comboBox1.SelectedIndex == 0 ? "9" : "6";
+                ///var index = comboBox1.SelectedIndex == 0 ? "9" : "6";
 
-                if (value.Equals(index))
+                if (value.Equals("9"))
                     option.SetAttribute("selected", "selected");
             }
 
@@ -120,8 +119,6 @@ namespace Glad
             var t = webBrowser1.Document.GetElementById("auction_table");
             _jadro.ParsujItemy(t.GetElementsByTagName("tr"));
 
-            dataGridView1.DataSource = null;
-            dataGridView1.DataSource = _jadro.listPonuk;
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -138,9 +135,12 @@ namespace Glad
 
         private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
-            label3.Text = _jadro.ZistiStavZlata();
-            label7.Text = _jadro.ZistiPocetExpBodov();
-            label9.Text = _jadro.ZistiPocetZivotov();
+            _jadro.AktualizujSystemovePremenne();
+            label3.Text = _jadro.Zlato.ToString();
+            label7.Text = _jadro.ExpBody.ToString();
+            label9.Text = _jadro.Zivoty;
+            label11.Text = _jadro.CasAreny.ToString();
+            label13.Text = _jadro.CasExpedicie.ToString();
             _jadro.UkladajZlato = checkBox1.Checked;
                        
 
@@ -153,11 +153,25 @@ namespace Glad
         private void button3_Click(object sender, EventArgs e)
         {
             _jadro.SpustSimulaciu(comboBoxLokacia.SelectedItem.ToString().Split('-'));
+
+            _jadro.KlikajArenu = checkBoxKlikajArenu.Checked;
+            _jadro.KlikajTurmu = checkBoxKlikajTurmu.Checked;
+            _jadro.KlikajExpedicie = checkBoxKlikajExpedicie.Checked;
+            _jadro.KlikajZalar = checkBoxKlikajZalar.Checked;
+
+            _jadro.JeKostym = checkBoxJeKostym.Checked;
+            _jadro.JeModPrieskum = checkBoxJeModPrieskum.Checked;
+            _jadro.JeModZarabanie = checkBoxJeModZarabaci.Checked;
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
             _jadro.SimulaciaBezi = false;
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            
         }
     }
 }
