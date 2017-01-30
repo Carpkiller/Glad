@@ -16,6 +16,7 @@ namespace Glad.Udalosti
             wb = webBrowser;
             TypAktivity = TypAktivityEnum.NacitajItemVAukcii;
             Index = index;
+            BlokujucaUdalost = BlokujucaUdalostEnum.Aukcia;
         }
 
         public override void Vykonaj()

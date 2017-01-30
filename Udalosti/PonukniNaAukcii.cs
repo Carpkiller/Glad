@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Glad.Udalosti
@@ -10,7 +7,7 @@ namespace Glad.Udalosti
     public class PonukniNaAukcii : Udalost
     {
         List<Ponuka> listPonuk;
-        List<System.Windows.Forms.HtmlElement> listElementov;
+        List<HtmlElement> listElementov;
         Jadro _jadro;
 
         public PonukniNaAukcii(TimeSpan cas, WebBrowser webBrowser, Jadro jadro)
@@ -19,6 +16,7 @@ namespace Glad.Udalosti
             wb = webBrowser;
             TypAktivity = TypAktivityEnum.PonukniNaAukcii;
             _jadro = jadro;
+            BlokujucaUdalost = BlokujucaUdalostEnum.Aukcia;
         }
 
         public override void Vykonaj()
@@ -39,15 +37,15 @@ namespace Glad.Udalosti
             _jadro.JePonuknute = false;
         }
 
-        internal void ParsujItemy(System.Windows.Forms.HtmlElementCollection inputHtml)
+        internal void ParsujItemy(HtmlElementCollection inputHtml)
         {
             listPonuk = new List<Ponuka>();
-            listElementov = new List<System.Windows.Forms.HtmlElement>();
+            listElementov = new List<HtmlElement>();
 
-            foreach (System.Windows.Forms.HtmlElement row in inputHtml)
+            foreach (HtmlElement row in inputHtml)
             {
                 var i = row.GetElementsByTagName("td");
-                foreach (System.Windows.Forms.HtmlElement item in i)
+                foreach (HtmlElement item in i)
                 {
                     var tt = item.GetElementsByTagName("input");
                     var divs = item.GetElementsByTagName("div");

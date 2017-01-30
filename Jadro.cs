@@ -1,17 +1,19 @@
-﻿using Glad.Databaza;
-using Glad.Udalosti;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Glad.Databaza;
+using Glad.Udalosti;
 
 namespace Glad
 {
     public class Jadro
     {
         public SortedList<TimeSpan, Udalost> KalendarUdalosti { get; set; }
+        public List<Udalost> KalendarBlokovanychUdalosti { get; set; }
+
         public bool Naplanova { get; set; }
         public int Zlato { get; set; }
         public string Hrac { get; set; }
@@ -23,7 +25,7 @@ namespace Glad
         public string CasZalaru { get; set; }
 
         public string Monstrum { get; set; }
-        public HracArena protivnik { get; set; }
+        public HracArena Protivnik { get; set; }
         public string Lokacia { get; set; }
 
         private readonly WebBrowser wb;
@@ -31,14 +33,17 @@ namespace Glad
         public bool SimulaciaBezi;
 
         public delegate void ZmenaKalendarUdalostiHandler();
+
         public event ZmenaKalendarUdalostiHandler ZmenaKalendarUdalosti;
 
         public delegate void ZmenaSimCasuHandler();
+
         public event ZmenaSimCasuHandler ZmenaSimCasu;
 
+        private BlokujucaUdalostEnum dovodBlokacieSimulacie;
 
-        public List<Ponuka> listPonuk;
-        public List<System.Windows.Forms.HtmlElement> listElementov;
+        public List<Ponuka> ListPonuk;
+        public List<HtmlElement> ListElementov;
 
         public bool UkladajZlato { get; set; }
         public bool JePonuknute { get; set; }
@@ -53,34 +58,37 @@ namespace Glad
 
         public Jadro(WebBrowser wb)
         {
-            listPonuk = new List<Ponuka>();
-            listElementov = new List<System.Windows.Forms.HtmlElement>();
+            ListPonuk = new List<Ponuka>();
+            ListElementov = new List<HtmlElement>();
             KalendarUdalosti = new SortedList<TimeSpan, Udalost>();
+            KalendarBlokovanychUdalosti = new List<Udalost>();
             this.wb = wb;
             SimulaciaBezi = false;
         }
 
-        internal void ParsujItemy(System.Windows.Forms.HtmlElementCollection inputHtml)
+        internal void ParsujItemy(HtmlElementCollection inputHtml)
         {
-            listPonuk = new List<Ponuka>();
-            listElementov = new List<System.Windows.Forms.HtmlElement>();
+            ListPonuk = new List<Ponuka>();
+            ListElementov = new List<HtmlElement>();
 
-            foreach (System.Windows.Forms.HtmlElement row in inputHtml)
+            foreach (HtmlElement row in inputHtml)
             {
                 var i = row.GetElementsByTagName("td");
-                foreach (System.Windows.Forms.HtmlElement item in i)
+                foreach (HtmlElement item in i)
                 {
                     var tt = item.GetElementsByTagName("input");
                     var divs = item.GetElementsByTagName("div");
-                    var y = item.OuterText.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+                    var y = item.OuterText.Split(new[] {"\r\n"}, StringSplitOptions.None);
 
                     if (y.Length > 1)
                     {
                         var najnizsiaPonuka = y[10].Split(':')[1].Trim().Replace(".", "");
                         var cena = y[12].Split(' ')[1].Replace(".", "");
 
-                        listPonuk.Add(new Ponuka("", najnizsiaPonuka, cena, divs[7].GetElementsByTagName("a").Count == 0 || divs[7].GetElementsByTagName("span").Count == 0));
-                        listElementov.Add(tt[7]);
+                        ListPonuk.Add(new Ponuka("", najnizsiaPonuka, cena,
+                            divs[7].GetElementsByTagName("a").Count == 0 ||
+                            divs[7].GetElementsByTagName("span").Count == 0));
+                        ListElementov.Add(tt[7]);
                     }
                 }
             }
@@ -88,13 +96,14 @@ namespace Glad
 
         public void SpustSimulaciu(string[] lokacia)
         {
+            dovodBlokacieSimulacie = BlokujucaUdalostEnum.Ziadna;
             SimCas = new TimeSpan(0, 0, 0, 0, 0);
             KalendarUdalosti = new SortedList<TimeSpan, Udalost>();
             Naplanova = true;
             Lokacia = lokacia[0].Trim();
             Monstrum = lokacia[1].Trim();
 
-            var simCasUdalosti = SimCas + new TimeSpan(0, 0, 2);
+            var simCasUdalosti = SimCas + new TimeSpan(0, 0, 1);
 
             KalendarUdalosti.Add(simCasUdalosti, new InicializacnaUdalost(simCasUdalosti, wb));
 
@@ -110,11 +119,26 @@ namespace Glad
 
             while (SimulaciaBezi)
             {
-                Console.WriteLine(SimCas + "  --  " + KalendarUdalosti.Values.Count);
-                if (SimCas.Equals(KalendarUdalosti.First().Value.CasSimulacie))
+                Console.WriteLine(SimCas + @"  --  " + KalendarUdalosti.Values.Count);
+                if (SimCas.Equals(KalendarUdalosti.First().Value.CasSimulacie) &&
+                    (dovodBlokacieSimulacie == BlokujucaUdalostEnum.Ziadna ||
+                     dovodBlokacieSimulacie == KalendarUdalosti.First().Value.BlokujucaUdalost))
                 {
+                    dovodBlokacieSimulacie = KalendarUdalosti.First().Value.BlokujucaUdalost;
                     KalendarUdalosti.First().Value.Vykonaj();
                     Naplanova = true;
+                }
+                else if (SimCas.Equals(KalendarUdalosti.First().Value.CasSimulacie) &&
+                         (dovodBlokacieSimulacie != BlokujucaUdalostEnum.Ziadna &&
+                          dovodBlokacieSimulacie != KalendarUdalosti.First().Value.BlokujucaUdalost))
+                {
+                    KalendarBlokovanychUdalosti.Add(KalendarUdalosti.First().Value);
+                    KalendarUdalosti.RemoveAt(0);
+                }
+
+                if (dovodBlokacieSimulacie == BlokujucaUdalostEnum.Ziadna && KalendarBlokovanychUdalosti.Count > 0)
+                {
+                    NaplanujBlokovanuAktivitu();
                 }
 
                 SimCas = SimCas.Add(new TimeSpan(0, 0, 0, 0, 100));
@@ -132,7 +156,18 @@ namespace Glad
             SimulaciaBezi = false;
         }
 
-        async Task PutTaskDelay()
+        private void NaplanujBlokovanuAktivitu()
+        {
+            var simCasUdalosti = SimCas + new TimeSpan(0, 0, 1);
+
+            var udalost = KalendarBlokovanychUdalosti.First();
+            KalendarBlokovanychUdalosti.RemoveAt(0);
+            udalost.CasSimulacie = simCasUdalosti;
+
+            KalendarUdalosti.Add(simCasUdalosti, udalost);
+        }
+
+        private async Task PutTaskDelay()
         {
             await Task.Delay(100);
         }
@@ -177,6 +212,15 @@ namespace Glad
                 case TypAktivityEnum.ZautocVArene:
                     NasledujucaPoZautocVArene();
                     break;
+                case TypAktivityEnum.NacitajTurmuProvinciarum:
+                    NasledujucaPoNacitajTurmuProvinciarum();
+                    break;
+                case TypAktivityEnum.ZautocVTurme:
+                    NasledujucaPoZautocVTurme();
+                    break;
+                case TypAktivityEnum.NacitajTurmu:
+                    NasledujucaPoNacitajTurmu();
+                    break;
             }
             Naplanova = false;
 
@@ -184,72 +228,232 @@ namespace Glad
                 ZmenaKalendarUdalosti();
         }
 
+        private void NasledujucaPoNacitajTurmu()
+        {
+            var simCasUdalosti = SimCas + new TimeSpan(0, 0, 1);
+            KalendarUdalosti.Add(simCasUdalosti, new NacitajTurmuProvinciarum(simCasUdalosti, wb));
+        }
+
         private void NasledujucaPoInicializacnaUdalost()
+        {
+            Hrac = ZistiMenoHraca();
+
+            TimeSpan simCasUdalosti;
+            if (KlikajArenu)
+            {
+                simCasUdalosti = SimCas + CasDostupnostiAreny();
+                KalendarUdalosti.Add(simCasUdalosti, new NacitajArenu(simCasUdalosti, wb));
+            }
+            if (KlikajExpedicie)
+            {
+                simCasUdalosti = SimCas + CasDostupnostiExpedicie();
+                KalendarUdalosti.Add(simCasUdalosti, new NacitajLokaciu(simCasUdalosti, wb, Lokacia));
+            }
+
+            if (KlikajTurmu)
+            {
+                simCasUdalosti = SimCas + CasDostupnostiTurmy();
+                KalendarUdalosti.Add(simCasUdalosti, new NacitajTurmu(simCasUdalosti, wb));
+            }
+        }
+
+        private string ZistiMenoHraca()
         {
             var profil = wb.Document.GetElementById("content").GetElementsByTagName("div");
             foreach (HtmlElement item in profil)
             {
                 if (item.GetAttribute("className") == "player_name_bg pngfix")
                 {
-                    Hrac = item.OuterText.Trim();
+                    return item.OuterText.Trim().Split(' ')[0];
                 }
             }
-            TimeSpan simCasUdalosti;
 
-            if (KlikajExpedicie)
-            {
-                simCasUdalosti = SimCas + CasDostupnostiExpedicie();
-                KalendarUdalosti.Add(simCasUdalosti, new NacitajLokaciu(simCasUdalosti, wb, Lokacia));
-            }
-            if (KlikajArenu)
-            {
-                simCasUdalosti = SimCas + CasDostupnostiAreny();
-                KalendarUdalosti.Add(simCasUdalosti, new NacitajArenu(simCasUdalosti, wb));
-            }
-
-
+            return String.Empty;
         }
 
         private void NasledujucaPoZautocVArene()
         {
             var simCasUdalosti = SimCas + CasDostupnostiAreny();
             KalendarUdalosti.Add(simCasUdalosti, new NacitajArenu(simCasUdalosti, wb));
+            dovodBlokacieSimulacie = BlokujucaUdalostEnum.Ziadna;
 
             UlozStatistiku();
+
+            if (UkladajZlato && Zlato > 30800)
+            {
+                simCasUdalosti = SimCas + new TimeSpan(0, 0, 2);
+                KalendarUdalosti.Add(simCasUdalosti, new NacitajAukcnuBudovu(simCasUdalosti, wb));
+            }
+        }
+
+        private void NasledujucaPoZautocVTurme()
+        {
+            var simCasUdalosti = SimCas + CasDostupnostiTurmy();
+            KalendarUdalosti.Add(simCasUdalosti, new NacitajTurmu(simCasUdalosti, wb));
+            dovodBlokacieSimulacie = BlokujucaUdalostEnum.Ziadna;
+
+            UlozStatistikuTurma();
+
+            if (UkladajZlato && Zlato > 30800)
+            {
+                simCasUdalosti = SimCas + new TimeSpan(0, 0, 2);
+                KalendarUdalosti.Add(simCasUdalosti, new NacitajAukcnuBudovu(simCasUdalosti, wb));
+            }
         }
 
         private TimeSpan CasDostupnostiAreny()
         {
-            if (CasAreny == "Do arény")
+            if (CasAreny.Length != 8)
             {
                 CasAreny = "0:0:0";
             }
             var casyDostupnosti = CasAreny.Split(':');
-            return new TimeSpan(int.Parse(casyDostupnosti[0]), int.Parse(casyDostupnosti[1]), int.Parse(casyDostupnosti[2])+4);
+            return new TimeSpan(int.Parse(casyDostupnosti[0]), int.Parse(casyDostupnosti[1]),
+                int.Parse(casyDostupnosti[2]) + 1);
         }
 
         private TimeSpan CasDostupnostiExpedicie()
         {
-            if (CasExpedicie == "Na výpravu")
+            if (CasExpedicie.Length != 8)
             {
                 CasExpedicie = "0:0:0";
             }
             var casyDostupnosti = CasExpedicie.Split(':');
-            return new TimeSpan(int.Parse(casyDostupnosti[0]), int.Parse(casyDostupnosti[1]), int.Parse(casyDostupnosti[2]));
+            return new TimeSpan(int.Parse(casyDostupnosti[0]), int.Parse(casyDostupnosti[1]),
+                int.Parse(casyDostupnosti[2]) + 1);
+        }
+
+        private TimeSpan CasDostupnostiTurmy()
+        {
+            if (CasTurmy.Length != 8)
+            {
+                CasTurmy = "0:0:0";
+            }
+            var casyDostupnosti = CasTurmy.Split(':');
+            return new TimeSpan(int.Parse(casyDostupnosti[0]), int.Parse(casyDostupnosti[1]),
+                int.Parse(casyDostupnosti[2]) + 1);
         }
 
         private void NasledujucaPoNacitajArenuProvinciarum()
         {
             var protivnici = ParsujHracovAreny();
-            protivnik = protivnici[NajdiNajvhodnejsiehoProtivnika(protivnici)];
+            Protivnik = NajdiNajvhodnejsiehoProtivnika(protivnici);
 
-            var simCasUdalosti = SimCas + new TimeSpan(0, 0, 2);            
-            KalendarUdalosti.Add(simCasUdalosti, new ZautocVArene(simCasUdalosti, wb, protivnik));
+            var simCasUdalosti = SimCas + new TimeSpan(0, 0, 1);
+            KalendarUdalosti.Add(simCasUdalosti, new ZautocVArene(simCasUdalosti, wb, Protivnik));
         }
 
-        private int NajdiNajvhodnejsiehoProtivnika(List<HracArena> protivnici)
+        private void NasledujucaPoNacitajTurmuProvinciarum()
         {
-            return 1;
+            var protivnici = ParsujHracovTurmy();
+            Protivnik = NajdiNajvhodnejsiehoProtivnikaTurma(protivnici);
+
+            var simCasUdalosti = SimCas + new TimeSpan(0, 0, 1);
+            KalendarUdalosti.Add(simCasUdalosti, new ZautocVTurme(simCasUdalosti, wb, Protivnik));
+        }
+
+        private HracArena NajdiNajvhodnejsiehoProtivnikaTurma(List<HracArena> protivnici)
+        {
+            var db = new SelectFromDatabase().GetZaznamy(protivnici, "4");
+            var pomList = new List<HracArena>(protivnici);
+
+            if (db.Count == 0)
+            {
+                return NajblizsiLevel(protivnici);
+            }
+
+            if (JeModPrieskum)
+            {
+                foreach (var protivnik in protivnici)
+                {
+                    if (db.Any(x => x.Protivnik == protivnik.MenoHraca))
+                    {
+                        pomList.Remove(protivnik);
+                    }
+                }
+                if (pomList.Count == 0)
+                {
+                    var najlepsiHrac = NajviacZlataZHraca(db);
+                    return protivnici.Find(x => x.MenoHraca == najlepsiHrac.Protivnik);
+                }
+                else
+                {
+                    return NajblizsiLevel(protivnici);
+                }
+            }
+            if (JeModZarabanie)
+            {
+                var najlepsiHrac = NajviacZlataZHraca(db);
+                return protivnici.Find(x => x.MenoHraca == najlepsiHrac.Protivnik);
+            }
+
+            return NajblizsiLevel(protivnici);
+        }
+
+        private HracArena NajblizsiLevel(List<HracArena> protivnici)
+        {
+            foreach (var prot in protivnici)
+            {
+                prot.Rating = Math.Abs(106 - int.Parse(prot.Uroven));
+            }
+
+            return protivnici.OrderBy(x => x.Rating).First();
+        }
+
+        private Zaznam NajviacZlataZHraca(List<Zaznam> protivnici)
+        {
+            int max = 0;
+            Zaznam hladanyHrac = null;
+
+            foreach (var protivnik in protivnici)
+            {
+                if (int.Parse(protivnik.Premia) > max)
+                {
+                    max = int.Parse(protivnik.Premia);
+                    hladanyHrac = protivnik;
+                }
+            }
+
+            return hladanyHrac;
+        }
+
+        private HracArena NajdiNajvhodnejsiehoProtivnika(List<HracArena> protivnici)
+        {
+            var db = new SelectFromDatabase().GetZaznamy(protivnici, "2");
+            var pomList = new List<HracArena>(protivnici);
+
+            if (db.Count == 0)
+            {
+                return NajblizsiLevel(protivnici);
+            }
+
+            if (JeModPrieskum)
+            {
+                // odstranenie hracov co sa vyskytuju v DB
+                foreach (var protivnik in protivnici)
+                {
+                    if (db.Any(x => x.Protivnik == protivnik.MenoHraca))
+                    {
+                        pomList.Remove(protivnik);
+                    }
+                }
+                if (pomList.Count == 0)
+                {
+                    var najlepsiHrac = NajviacZlataZHraca(db);
+                    return protivnici.Find(x => x.MenoHraca == najlepsiHrac.Protivnik);
+                }
+                else
+                {
+                    return NajblizsiLevel(protivnici);
+                }
+            }
+            if (JeModZarabanie)
+            {
+                var najlepsiHrac = NajviacZlataZHraca(db);
+                return protivnici.Find(x => x.MenoHraca == najlepsiHrac.Protivnik);
+            }
+
+            return NajblizsiLevel(protivnici);
         }
 
         private List<HracArena> ParsujHracovAreny()
@@ -257,14 +461,37 @@ namespace Glad
             List<HracArena> res = new List<HracArena>();
             var loc = wb.Document.GetElementById("own2").GetElementsByTagName("tr");
 
-            for (int i = 1; i < loc.Count; i++ )
+            for (int i = 1; i < loc.Count; i++)
             {
                 var riadok = loc[i].GetElementsByTagName("td");
-                var hracArena = new HracArena();
-                hracArena.MenoHraca = riadok[0].OuterText.Trim();
-                hracArena.Uroven = riadok[1].OuterText.Trim();
-                hracArena.Server = riadok[2].OuterText.Trim();
-                hracArena.ButtonUtok = riadok[3].GetElementsByTagName("span")[0];
+                var hracArena = new HracArena
+                {
+                    MenoHraca = riadok[0].OuterText.Trim(),
+                    Uroven = riadok[1].OuterText.Trim(),
+                    Server = riadok[2].OuterText.Trim(),
+                    ButtonUtok = riadok[3].GetElementsByTagName("span")[0]
+                };
+                res.Add(hracArena);
+            }
+
+            return res;
+        }
+
+        private List<HracArena> ParsujHracovTurmy()
+        {
+            List<HracArena> res = new List<HracArena>();
+            var loc = wb.Document.GetElementById("own3").GetElementsByTagName("tr");
+
+            for (int i = 1; i < loc.Count; i++)
+            {
+                var riadok = loc[i].GetElementsByTagName("td");
+                var hracArena = new HracArena
+                {
+                    MenoHraca = riadok[0].OuterText.Trim(),
+                    Uroven = riadok[1].OuterText.Trim(),
+                    Server = riadok[2].OuterText.Trim(),
+                    ButtonUtok = riadok[3].GetElementsByTagName("span")[0]
+                };
                 res.Add(hracArena);
             }
 
@@ -273,19 +500,19 @@ namespace Glad
 
         private void NasledujucaPoNacitajArenu()
         {
-            var simCasUdalosti = SimCas + new TimeSpan(0, 0, 2);
+            var simCasUdalosti = SimCas + new TimeSpan(0, 0, 1);
             KalendarUdalosti.Add(simCasUdalosti, new NacitajArenuProvinciarum(simCasUdalosti, wb));
         }
 
         private void NasledujucaPoNacitajInventar()
         {
-            var simCasUdalosti = SimCas + new TimeSpan(0, 0, 2);
+            var simCasUdalosti = SimCas + new TimeSpan(0, 0, 1);
             KalendarUdalosti.Add(simCasUdalosti, new AktivujElixir(simCasUdalosti, wb));
         }
 
         private void NasledujucaPoNacitajPremium()
         {
-            var simCasUdalosti = SimCas + new TimeSpan(0, 0, 2);
+            var simCasUdalosti = SimCas + new TimeSpan(0, 0, 1);
             KalendarUdalosti.Add(simCasUdalosti, new NacitajInventar(simCasUdalosti, wb));
         }
 
@@ -308,7 +535,7 @@ namespace Glad
                 {
                     simCasUdalosti = SimCas + new TimeSpan(0, 0, 5);
                     KalendarUdalosti.Add(simCasUdalosti, new NacitajPremium(simCasUdalosti, wb));
-                }                
+                }
             }
         }
 
@@ -336,11 +563,13 @@ namespace Glad
                 KalendarUdalosti.Clear();
             }
 
-            if (UkladajZlato && Zlato > 35800)
+            if (UkladajZlato && Zlato > 30800)
             {
-                simCasUdalosti = SimCas + new TimeSpan(0, 0, 2);
+                simCasUdalosti = SimCas + new TimeSpan(0, 0, 1);
                 KalendarUdalosti.Add(simCasUdalosti, new NacitajAukcnuBudovu(simCasUdalosti, wb));
-            }            
+            }
+
+            dovodBlokacieSimulacie = BlokujucaUdalostEnum.Ziadna;
         }
 
         private void NasledujucaPoNacitajLokaciu()
@@ -351,18 +580,18 @@ namespace Glad
 
         public string[] LoadLokacie()
         {
-            string[] lines = System.IO.File.ReadAllLines(@"Data\\Lokacie.txt");
+            string[] lines = File.ReadAllLines(@"Data\\Lokacie.txt");
 
             return lines;
         }
 
         private void UlozStatistiku()
-        {        
+        {
             string mojeZasahy = "0";
             string superoveZasahy = "0";
             string server = "";
             string zlato = "0";
-            string premia = "0"; 
+            string premia = "0";
             string zasahy = "";
             var vysledok = wb.Document.GetElementById("reportHeader").InnerText.Split(' ')[2];
 
@@ -378,8 +607,8 @@ namespace Glad
 
                         var slova = riadky[0].OuterText.Split(' ');
 
-                        zlato = slova[2];
-                        premia = slova[10];
+                        zlato = slova[2].Replace(".", "");
+                        premia = slova[10].Replace(".", "");
                         break;
                     }
                 }
@@ -388,22 +617,85 @@ namespace Glad
             var zranenia = wb.Document.GetElementById("content").GetElementsByTagName("fieldset");
             foreach (HtmlElement item in zranenia)
             {
-                    if (item.GetAttribute("className") == "dungeon_report_statistic")
-                    {
-                        var riadky = item.GetElementsByTagName("tr");
-                        mojeZasahy = riadky[1].GetElementsByTagName("td")[2].OuterText;
-                        superoveZasahy = riadky[2].GetElementsByTagName("td")[2].OuterText;
-                        break;
-                    }
+                if (item.GetAttribute("className") == "dungeon_report_statistic")
+                {
+                    var riadky = item.GetElementsByTagName("tr");
+                    mojeZasahy = riadky[1].GetElementsByTagName("td")[2].OuterText;
+                    superoveZasahy = riadky[2].GetElementsByTagName("td")[2].OuterText;
+                    break;
+                }
             }
 
             if (!JeKostym)
             {
-                premia = (int.Parse(premia) * 10 + int.Parse(premia)).ToString();
+                premia = (int.Parse(premia)*10 + int.Parse(premia)).ToString();
             }
 
-            var result = new InsertToDatabase().VlozVysledokSuboja("2", Hrac, protivnik.MenoHraca, protivnik.Server, zlato, premia, mojeZasahy + "/" + superoveZasahy, vysledok);
+            var result = new InsertToDatabase().VlozVysledokSuboja("2", Hrac, Protivnik.MenoHraca, Protivnik.Server,
+                zlato, premia, mojeZasahy + "/" + superoveZasahy, vysledok);
 
+        }
+
+        private void UlozStatistikuTurma()
+        {
+            string mojeZasahy = "0";
+            string superoveZasahy = "0";
+            string server = "";
+            string zlato = "0";
+            string premia = "0";
+            string zasahy = "";
+
+            string vysledok = "";
+
+            vysledok = wb.Document.GetElementById("reportHeader").InnerText.Split(' ')[2];
+
+            var report = wb.Document.GetElementById("content").GetElementsByTagName("div");
+
+
+            foreach (HtmlElement item in report)
+            {
+                if (item.GetAttribute("className") == "title2_box")
+                {
+                    var slova = item.OuterText.Split(' ');
+
+                    mojeZasahy = slova[2];
+                    superoveZasahy = slova[6];
+                    break;
+                }
+            }
+
+            foreach (HtmlElement item in report)
+            {
+                if (vysledok == "jalcisko" || vysledok == "Lukass")
+                {
+                    if (item.GetAttribute("className") == "report_reward")
+                    {
+                        var podele = item.GetElementsByTagName("div");
+
+                        foreach (HtmlElement poditem in podele)
+                        {
+                            if (poditem.GetAttribute("className") == "title2_inner")
+                            {
+                                var riadky = item.GetElementsByTagName("p");
+
+                                var slova = riadky[0].OuterText.Split(' ');
+
+                                zlato = slova[2].Replace(".", "");
+                                premia = slova[10].Replace(".", "");
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (!JeKostym)
+            {
+                premia = (int.Parse(premia)*10 + int.Parse(premia)).ToString();
+            }
+
+            var result = new InsertToDatabase().VlozVysledokSuboja("4", Hrac, Protivnik.MenoHraca, Protivnik.Server,
+                zlato, premia, mojeZasahy + "/" + superoveZasahy, vysledok);
         }
 
         internal void AktualizujSystemovePremenne()
@@ -414,7 +706,7 @@ namespace Glad
             CasTurmy = wb.Document.GetElementById("cooldown_bar_ct").InnerText.Replace("\r\n", "");
             Zivoty = wb.Document.GetElementById("header_values_hp_percent").InnerText;
             ExpBody = int.Parse(wb.Document.GetElementById("expeditionpoints_value_point").InnerText);
-            Zlato = int.Parse(wb.Document.GetElementById("sstat_gold_val").InnerText.Replace(".", ""));           
+            Zlato = int.Parse(wb.Document.GetElementById("sstat_gold_val").InnerText.Replace(".", ""));
         }
     }
 }

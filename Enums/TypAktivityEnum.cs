@@ -4,7 +4,6 @@
     {
         InicializacnaUdalost,
         NacitajLokaciu,
-        ZautocNaExpedicii,
         NacitajItemVAukcii,
         NacitajAukcnuBudovu,
         PonukniNaAukcii,
@@ -12,8 +11,12 @@
         NacitajPremium,
         AktivujElixir,
         NacitajArenu,
+        NacitajTurmu,
         NacitajArenuProvinciarum,
+        NacitajTurmuProvinciarum,
+        ZautocNaExpedicii,
         ZautocVArene,
+        ZautocVTurme,
         Refresh
     }
 }

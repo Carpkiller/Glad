@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace Glad
 {
@@ -12,6 +7,7 @@ namespace Glad
         public string MenoHraca { get; set; }
         public string Uroven { get; set; }
         public string Server { get; set; }
+        public int Rating { get; set; }
         public HtmlElement ButtonUtok { get; set; }
 
         public HracArena(string meno, string uroven, string server, HtmlElement htmlElem)

@@ -3,23 +3,23 @@ using System.Windows.Forms;
 
 namespace Glad.Udalosti
 {
-    public class InicializacnaUdalost : Udalost
+    public class NacitajTurmu : Udalost 
     {
-        public InicializacnaUdalost(TimeSpan cas, WebBrowser webBrowser)
+        public NacitajTurmu(TimeSpan cas, WebBrowser webBrowser)
         {
             CasSimulacie = cas;
             wb = webBrowser;
-            TypAktivity = TypAktivityEnum.InicializacnaUdalost;
-            BlokujucaUdalost = BlokujucaUdalostEnum.Ziadna;
+            TypAktivity = TypAktivityEnum.NacitajTurmu;
+            BlokujucaUdalost = BlokujucaUdalostEnum.Turma;
         }
 
         public override void Vykonaj()
         {
-            var c = wb.Document.GetElementById("mainmenu").GetElementsByTagName("a");    // nacitacnie aukcnej budovy
+            var c = wb.Document.GetElementById("submenu1").GetElementsByTagName("a");    // nacitacnie aukcnej budovy
             foreach (HtmlElement item in c)
             {
                 Console.WriteLine(item.OuterText);
-                if (item.OuterText == "Prehľad")
+                if (item.OuterText == "Aréna")
                 {
                     item.InvokeMember("Click");
                 }

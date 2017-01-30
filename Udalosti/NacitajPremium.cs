@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Glad.Udalosti
@@ -14,6 +10,7 @@ namespace Glad.Udalosti
             CasSimulacie = cas;
             wb = webBrowser;
             TypAktivity = TypAktivityEnum.NacitajPremium;
+            BlokujucaUdalost = BlokujucaUdalostEnum.DoplnenieZivota;
         }
 
         public override void Vykonaj()

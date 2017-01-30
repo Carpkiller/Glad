@@ -8,6 +8,7 @@ namespace Glad
         public TimeSpan CasSimulacie { get; set; }
         protected WebBrowser wb;
         public TypAktivityEnum TypAktivity { get; set; }
+        public BlokujucaUdalostEnum BlokujucaUdalost { get; set; }
 
         public abstract void Vykonaj();
 

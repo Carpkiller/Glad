@@ -1,12 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Glad
@@ -70,69 +63,6 @@ namespace Glad
             Console.WriteLine("Login ... ");
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            var c = webBrowser1.Document.GetElementById("submenu1").GetElementsByTagName("a");    // nacitacnie aukcnej budovy
-            foreach (HtmlElement item in c)
-            {
-                Console.WriteLine(item.OuterText);
-                if (item.OuterText == "Aukčná budova")
-                {
-                    item.InvokeMember("Click");
-                }
-            }
-            
-            while (true)           // cakanie na nacitanie
-            {
-                Console.WriteLine(webBrowser1.StatusText);
-                Application.DoEvents();
-                if (!webBrowser1.IsBusy && !string.IsNullOrEmpty(webBrowser1.StatusText) && !webBrowser1.StatusText.Contains("s4-sk.gladiatus.gameforge.com"))
-                    break;
-            }
-
-            var o = webBrowser1.Document.GetElementsByTagName("select").GetElementsByName("itemType")[0].Children;
-
-            foreach (HtmlElement option in o)        // vyber typu itemy z aukcie
-            {
-                var value = option.GetAttribute("value").ToString();
-                Console.WriteLine(value);
-
-                // prstene - 6
-                // amulety - 9
-                ///var index = comboBox1.SelectedIndex == 0 ? "9" : "6";
-
-                if (value.Equals("9"))
-                    option.SetAttribute("selected", "selected");
-            }
-
-            var s = webBrowser1.Document.GetElementsByTagName("input");   // kliknutie na tlacitko FILTER v aukcii
-            s[6].InvokeMember("Click");
-
-            while (true)
-            {
-                Console.WriteLine(webBrowser1.StatusText);
-                Application.DoEvents();
-                if (!webBrowser1.IsBusy && !string.IsNullOrEmpty(webBrowser1.StatusText) && !webBrowser1.StatusText.Contains("s4-sk.gladiatus.gameforge.com"))
-                    break;
-            }
-
-            var t = webBrowser1.Document.GetElementById("auction_table");
-            _jadro.ParsujItemy(t.GetElementsByTagName("tr"));
-
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            for (int i = 0; i < _jadro.listPonuk.Count; i++)
-            {
-                if (_jadro.listPonuk[i].NajnizsiaPonuka > _jadro.listPonuk[i].Cena && _jadro.listPonuk[i].Volny)
-                {
-                    var tlacPonukni = _jadro.listElementov[i];
-                    tlacPonukni.InvokeMember("Click");
-                }
-            }
-        }
-
         private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
             _jadro.AktualizujSystemovePremenne();
@@ -171,7 +101,7 @@ namespace Glad
 
         private void button5_Click(object sender, EventArgs e)
         {
-            
+            //_jadro.NajdiNajvhodnejsiehoProtivnikaTurma(null);
         }
     }
 }

@@ -32,23 +32,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework">
-      <HintPath>..\packages\EntityFramework.6.0.2\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer">
-      <HintPath>..\packages\EntityFramework.6.0.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Data.SQLite">
-      <HintPath>..\packages\System.Data.SQLite.Core.1.0.104.0\lib\net45\System.Data.SQLite.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.SQLite.EF6">
-      <HintPath>..\packages\System.Data.SQLite.EF6.1.0.104.0\lib\net45\System.Data.SQLite.EF6.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.SQLite.Linq">
-      <HintPath>..\packages\System.Data.SQLite.Linq.1.0.104.0\lib\net45\System.Data.SQLite.Linq.dll</HintPath>
+      <HintPath>..\WebBrowser\bin\Debug\System.Data.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
@@ -62,7 +51,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Databaza\InsertToDatabase.cs" />
+    <Compile Include="Databaza\SelectFromDatabase.cs" />
     <Compile Include="ElementPostions.cs" />
+    <Compile Include="Enums\BlokujucaUdalostEnum.cs" />
     <Compile Include="HlavneOkno.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -79,8 +70,11 @@
     <Compile Include="Udalosti\NacitajInventar.cs" />
     <Compile Include="Udalosti\NacitajItemVAukcii.cs" />
     <Compile Include="Udalosti\NacitajPremium.cs" />
+    <Compile Include="Udalosti\NacitajTurmu.cs" />
+    <Compile Include="Udalosti\NacitajTurmuProvinciarum.cs" />
     <Compile Include="Udalosti\PonukniNaAukcii.cs" />
     <Compile Include="Udalosti\ZautocVArene.cs" />
+    <Compile Include="Udalosti\ZautocVTurme.cs" />
     <Compile Include="Udalosti_old\KlikKontakt.cs" />
     <Compile Include="Udalosti_old\KlikLogo.cs" />
     <Compile Include="Udalosti_old\KlikZlavy.cs" />
@@ -93,6 +87,7 @@
     <Compile Include="Enums\TypAktivityEnum.cs" />
     <Compile Include="Udalost.cs" />
     <Compile Include="Udalosti\ZautocNaExpedicii.cs" />
+    <Compile Include="Zaznam.cs" />
     <EmbeddedResource Include="HlavneOkno.resx">
       <DependentUpon>HlavneOkno.cs</DependentUpon>
     </EmbeddedResource>

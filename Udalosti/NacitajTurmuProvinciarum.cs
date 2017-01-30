@@ -3,23 +3,23 @@ using System.Windows.Forms;
 
 namespace Glad.Udalosti
 {
-    public class InicializacnaUdalost : Udalost
+    public class NacitajTurmuProvinciarum : Udalost
     {
-        public InicializacnaUdalost(TimeSpan cas, WebBrowser webBrowser)
+        public NacitajTurmuProvinciarum(TimeSpan cas, WebBrowser webBrowser)
         {
             CasSimulacie = cas;
             wb = webBrowser;
-            TypAktivity = TypAktivityEnum.InicializacnaUdalost;
-            BlokujucaUdalost = BlokujucaUdalostEnum.Ziadna;
+            TypAktivity = TypAktivityEnum.NacitajTurmuProvinciarum;
+            BlokujucaUdalost = BlokujucaUdalostEnum.Turma;
         }
 
         public override void Vykonaj()
         {
-            var c = wb.Document.GetElementById("mainmenu").GetElementsByTagName("a");    // nacitacnie aukcnej budovy
+            var c = wb.Document.GetElementById("mainnav").GetElementsByTagName("a");    // nacitacnie aukcnej budovy
             foreach (HtmlElement item in c)
             {
                 Console.WriteLine(item.OuterText);
-                if (item.OuterText == "Prehľad")
+                if (item.OuterText == "Circus Provinciarum")
                 {
                     item.InvokeMember("Click");
                 }

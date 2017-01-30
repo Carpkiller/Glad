@@ -13,6 +13,7 @@ namespace Glad.Udalosti
             wb = webBrowser;
             TypAktivity = TypAktivityEnum.NacitajLokaciu;
             _lokacia = lokacia;
+            BlokujucaUdalost = BlokujucaUdalostEnum.Expedicia;
         }
 
         public override void Vykonaj()

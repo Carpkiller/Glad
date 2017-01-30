@@ -14,6 +14,7 @@ namespace Glad.Udalosti
             CasSimulacie = cas;
             wb = webBrowser;
             TypAktivity = TypAktivityEnum.NacitajArenuProvinciarum;
+            BlokujucaUdalost = BlokujucaUdalostEnum.Arena;
         }
 
         public override void Vykonaj()

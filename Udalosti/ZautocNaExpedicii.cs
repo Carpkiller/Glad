@@ -13,6 +13,7 @@ namespace Glad.Udalosti
             wb = webBrowser;
             TypAktivity = TypAktivityEnum.ZautocNaExpedicii;
             _monstrum = monstrum;
+            BlokujucaUdalost = BlokujucaUdalostEnum.Expedicia;
         }
 
         public override void Vykonaj()

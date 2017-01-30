@@ -14,6 +14,7 @@ namespace Glad.Udalosti
             CasSimulacie = cas;
             wb = webBrowser;
             TypAktivity = TypAktivityEnum.NacitajAukcnuBudovu;
+            BlokujucaUdalost = BlokujucaUdalostEnum.Aukcia;
         }
 
         public override void Vykonaj()

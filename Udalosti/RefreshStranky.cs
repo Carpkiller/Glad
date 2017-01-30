@@ -10,6 +10,7 @@ namespace Glad.Udalosti
             CasSimulacie = cas;
             wb = webBrowser;
             TypAktivity = TypAktivityEnum.Refresh;
+            BlokujucaUdalost = BlokujucaUdalostEnum.Ziadna;
         }
 
         public override void Vykonaj()

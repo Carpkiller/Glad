@@ -3,17 +3,17 @@ using System.Windows.Forms;
 
 namespace Glad.Udalosti
 {
-    public class ZautocVArene : Udalost
+    public class ZautocVTurme : Udalost
     {
         private HracArena _super;
 
-        public ZautocVArene(TimeSpan cas, WebBrowser webBrowser, HracArena super)
+        public ZautocVTurme(TimeSpan cas, WebBrowser webBrowser, HracArena super)
         {
             CasSimulacie = cas;
             wb = webBrowser;
-            TypAktivity = TypAktivityEnum.ZautocVArene;
+            TypAktivity = TypAktivityEnum.ZautocVTurme;
             _super = super;
-            BlokujucaUdalost = BlokujucaUdalostEnum.Arena;
+            BlokujucaUdalost = BlokujucaUdalostEnum.Turma;
         }
 
         public override void Vykonaj()
