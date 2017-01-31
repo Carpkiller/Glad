@@ -349,8 +349,6 @@
             // 
             this.checkBoxKlikajExpedicie.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxKlikajExpedicie.AutoSize = true;
-            this.checkBoxKlikajExpedicie.Checked = true;
-            this.checkBoxKlikajExpedicie.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxKlikajExpedicie.Location = new System.Drawing.Point(8, 24);
             this.checkBoxKlikajExpedicie.Name = "checkBoxKlikajExpedicie";
             this.checkBoxKlikajExpedicie.Size = new System.Drawing.Size(99, 17);
@@ -379,6 +377,8 @@
             // 
             this.checkBoxJeKostym.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxJeKostym.AutoSize = true;
+            this.checkBoxJeKostym.Checked = true;
+            this.checkBoxJeKostym.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxJeKostym.Location = new System.Drawing.Point(172, 103);
             this.checkBoxJeKostym.Name = "checkBoxJeKostym";
             this.checkBoxJeKostym.Size = new System.Drawing.Size(60, 17);
@@ -414,6 +414,8 @@
             // 
             this.checkBoxTurmaProv.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxTurmaProv.AutoSize = true;
+            this.checkBoxTurmaProv.Checked = true;
+            this.checkBoxTurmaProv.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxTurmaProv.Location = new System.Drawing.Point(6, 103);
             this.checkBoxTurmaProv.Name = "checkBoxTurmaProv";
             this.checkBoxTurmaProv.Size = new System.Drawing.Size(126, 17);
@@ -425,6 +427,8 @@
             // 
             this.checkBoxKlikajTurmu.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxKlikajTurmu.AutoSize = true;
+            this.checkBoxKlikajTurmu.Checked = true;
+            this.checkBoxKlikajTurmu.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxKlikajTurmu.Location = new System.Drawing.Point(7, 80);
             this.checkBoxKlikajTurmu.Name = "checkBoxKlikajTurmu";
             this.checkBoxKlikajTurmu.Size = new System.Drawing.Size(80, 17);

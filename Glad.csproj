@@ -62,6 +62,7 @@
     </Compile>
     <Compile Include="HracArena.cs" />
     <Compile Include="Jadro.cs" />
+    <Compile Include="Logovanie.cs" />
     <Compile Include="Udalosti\AktivujElixir.cs" />
     <Compile Include="Udalosti\InicializacnaUdalost.cs" />
     <Compile Include="Udalosti\NacitajArenu.cs" />

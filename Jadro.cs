@@ -354,7 +354,11 @@ namespace Glad
 
         private HracArena NajdiNajvhodnejsiehoProtivnikaTurma(List<HracArena> protivnici)
         {
+            try
+            {
+            Logovanie.ZalogujProtivnikov(protivnici);
             var db = new SelectFromDatabase().GetZaznamy(protivnici, "4");
+            Logovanie.ZalogujDbResult(db);
             var pomList = new List<HracArena>(protivnici);
 
             if (db.Count == 0)
@@ -366,6 +370,7 @@ namespace Glad
                 var najlepsiHrac = NajviacZlataZHraca(db);
                 if (najlepsiHrac.Premia == "40194")
                 {
+                    Logovanie.LogujText(string.Format("Pripad 1. - {0} - {1}", najlepsiHrac.Protivnik, najlepsiHrac.Premia));
                     return protivnici.Find(x => x.MenoHraca == najlepsiHrac.Protivnik);
                 }
             }
@@ -374,27 +379,40 @@ namespace Glad
             {
                 foreach (var protivnik in protivnici)
                 {
-                    if (db.Any(x => x.Protivnik == protivnik.MenoHraca))
+                    foreach (var zaznam in db)
                     {
-                        pomList.Remove(protivnik);
+                        if (zaznam.Protivnik == protivnik.MenoHraca)
+                        {
+                            Logovanie.LogujText(string.Format("Odstranovanie hraca - {0}", protivnik.MenoHraca));
+                            pomList.Remove(protivnik);
+                            break;
+                        }
                     }
                 }
                 if (pomList.Count == 0)
                 {
                     var najlepsiHrac = NajviacZlataZHraca(db);
+                    Logovanie.LogujText(string.Format("Pripad 2. - {0} - {1}", najlepsiHrac.Protivnik, najlepsiHrac.Premia));
                     return protivnici.Find(x => x.MenoHraca == najlepsiHrac.Protivnik);
                 }
                 else
                 {
-                    return NajblizsiLevel(protivnici);
+                    Logovanie.LogujText("Pomocny list");
+                    Logovanie.ZalogujProtivnikov(pomList);
+                    return NajblizsiLevel(pomList);
                 }
             }
             if (JeModZarabanie)
             {
                 var najlepsiHrac = NajviacZlataZHraca(db);
+                Logovanie.LogujText(string.Format("Pripad 3. - {0} - {1}", najlepsiHrac.Protivnik, najlepsiHrac.Premia));
                 return protivnici.Find(x => x.MenoHraca == najlepsiHrac.Protivnik);
             }
-
+            }
+            catch (Exception e )
+            {
+                MessageBox.Show(e.Message);
+            }
             return NajblizsiLevel(protivnici);
         }
 
@@ -405,6 +423,7 @@ namespace Glad
                 prot.Rating = Math.Abs(106 - int.Parse(prot.Uroven));
             }
 
+            Logovanie.ZalogujSupera(protivnici.OrderBy(x => x.Rating).First());
             return protivnici.OrderBy(x => x.Rating).First();
         }
 
@@ -452,7 +471,7 @@ namespace Glad
                 }
                 else
                 {
-                    return NajblizsiLevel(protivnici);
+                    return NajblizsiLevel(pomList);
                 }
             }
             if (JeModZarabanie)
