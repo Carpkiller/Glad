@@ -196,11 +196,13 @@ namespace Glad
 
         public void NaplanujDalsiuAktivitu(TypAktivityEnum predchAktiv = TypAktivityEnum.Refresh)
         {
+            if (KalendarUdalosti.Count > 0)
+            {
+                predchAktiv = KalendarUdalosti.First().Value.TypAktivity;
+                KalendarUdalosti.RemoveAt(0);
+            }
 
-            var predchAktivita = KalendarUdalosti.First().Value.TypAktivity;
-            KalendarUdalosti.RemoveAt(0);
-
-            switch (predchAktivita)
+            switch (predchAktiv)
             {
                 case TypAktivityEnum.InicializacnaUdalost:
                     NasledujucaPoInicializacnaUdalost();
@@ -362,7 +364,7 @@ namespace Glad
 
         private TimeSpan CasDostupnostiAreny()
         {
-            if (CasAreny.Length != 8)
+            if (CasAreny.Trim() == "Do arény")
             {
                 CasAreny = "0:0:0";
             }
@@ -390,7 +392,7 @@ namespace Glad
             }
             var casyDostupnosti = CasTurmy.Split(':');
             return new TimeSpan(int.Parse(casyDostupnosti[0]), int.Parse(casyDostupnosti[1]),
-                int.Parse(casyDostupnosti[2]) + 1);
+                int.Parse(casyDostupnosti[2]) + 2);
         }
 
         private void NasledujucaPoNacitajArenuProvinciarum()
