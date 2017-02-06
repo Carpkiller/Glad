@@ -13,6 +13,8 @@ namespace Glad
     {
         public SortedList<TimeSpan, Udalost> KalendarUdalosti { get; set; }
         public List<Udalost> KalendarBlokovanychUdalosti { get; set; }
+        private List<string> PoradieZalohovania { get; set; }
+        private int _indexZalohovania;
 
         public bool Naplanova { get; set; }
         public int Zlato { get; set; }
@@ -31,6 +33,7 @@ namespace Glad
         private readonly WebBrowser wb;
         public TimeSpan SimCas;
         public bool SimulaciaBezi;
+        public bool Inicializacia { get; set; }
 
         public delegate void ZmenaKalendarUdalostiHandler();
 
@@ -64,6 +67,14 @@ namespace Glad
             KalendarBlokovanychUdalosti = new List<Udalost>();
             this.wb = wb;
             SimulaciaBezi = false;
+            Inicializacia = false;
+            JePonuknute = true;
+            PoradieZalohovania = new List<string>()
+            {
+                "9",
+                "6"
+            };
+            _indexZalohovania = 0;
         }
 
         internal void ParsujItemy(HtmlElementCollection inputHtml)
@@ -103,9 +114,15 @@ namespace Glad
             Lokacia = lokacia[0].Trim();
             Monstrum = lokacia[1].Trim();
 
-            var simCasUdalosti = SimCas + new TimeSpan(0, 0, 1);
-
-            KalendarUdalosti.Add(simCasUdalosti, new InicializacnaUdalost(simCasUdalosti, wb));
+            if (!Inicializacia)
+            {
+                var simCasUdalosti = SimCas + new TimeSpan(0, 0, 1);
+                KalendarUdalosti.Add(simCasUdalosti, new InicializacnaUdalost(simCasUdalosti, wb));
+            }
+            else
+            {
+                NaplanujDalsiuAktivitu(TypAktivityEnum.NaplanujDalsieUdalosti);
+            }
 
             SpustBehSimulacie();
 
@@ -141,6 +158,11 @@ namespace Glad
                     NaplanujBlokovanuAktivitu();
                 }
 
+                if (!JePonuknute)
+                {
+                    NaplanujDalsiuAktivitu(TypAktivityEnum.NeboloPonuknuteVAukcii);
+                }
+
                 SimCas = SimCas.Add(new TimeSpan(0, 0, 0, 0, 100));
                 await PutTaskDelay();
 
@@ -172,8 +194,9 @@ namespace Glad
             await Task.Delay(100);
         }
 
-        public void NaplanujDalsiuAktivitu()
+        public void NaplanujDalsiuAktivitu(TypAktivityEnum predchAktiv = TypAktivityEnum.Refresh)
         {
+
             var predchAktivita = KalendarUdalosti.First().Value.TypAktivity;
             KalendarUdalosti.RemoveAt(0);
 
@@ -181,6 +204,9 @@ namespace Glad
             {
                 case TypAktivityEnum.InicializacnaUdalost:
                     NasledujucaPoInicializacnaUdalost();
+                    break;
+                case TypAktivityEnum.NaplanujDalsieUdalosti:
+                    NasledujucaNaplanujDalsieUdalosti();
                     break;
                 case TypAktivityEnum.NacitajLokaciu:
                     NasledujucaPoNacitajLokaciu();
@@ -196,6 +222,9 @@ namespace Glad
                     break;
                 case TypAktivityEnum.PonukniNaAukcii:
                     NasledujucaPoPonukniNaAukcii();
+                    break;
+                case TypAktivityEnum.NeboloPonuknuteVAukcii:
+                    NasledujucaPoNeboloPonuknuteVAukcii();
                     break;
                 case TypAktivityEnum.NacitajPremium:
                     NasledujucaPoNacitajPremium();
@@ -234,6 +263,28 @@ namespace Glad
             KalendarUdalosti.Add(simCasUdalosti, new NacitajTurmuProvinciarum(simCasUdalosti, wb));
         }
 
+        private void NasledujucaNaplanujDalsieUdalosti()
+        {
+            TimeSpan simCasUdalosti;
+            if (KlikajArenu)
+            {
+                simCasUdalosti = SimCas + CasDostupnostiAreny();
+                KalendarUdalosti.Add(simCasUdalosti, new NacitajArenu(simCasUdalosti, wb));
+            }
+            if (KlikajExpedicie)
+            {
+                simCasUdalosti = SimCas + CasDostupnostiExpedicie();
+                KalendarUdalosti.Add(simCasUdalosti, new NacitajLokaciu(simCasUdalosti, wb, Lokacia));
+            }
+
+            if (KlikajTurmu)
+            {
+                simCasUdalosti = SimCas + CasDostupnostiTurmy();
+                KalendarUdalosti.Add(simCasUdalosti, new NacitajTurmu(simCasUdalosti, wb));
+            }
+        }
+
+
         private void NasledujucaPoInicializacnaUdalost()
         {
             Hrac = ZistiMenoHraca();
@@ -255,6 +306,8 @@ namespace Glad
                 simCasUdalosti = SimCas + CasDostupnostiTurmy();
                 KalendarUdalosti.Add(simCasUdalosti, new NacitajTurmu(simCasUdalosti, wb));
             }
+
+            Inicializacia = true;
         }
 
         private string ZistiMenoHraca()
@@ -284,6 +337,12 @@ namespace Glad
                 simCasUdalosti = SimCas + new TimeSpan(0, 0, 2);
                 KalendarUdalosti.Add(simCasUdalosti, new NacitajAukcnuBudovu(simCasUdalosti, wb));
             }
+            if (int.Parse(Zivoty.Replace("%", "")) < 2)
+            {
+                simCasUdalosti = SimCas + new TimeSpan(0, 0, 2);
+                KalendarUdalosti.Add(simCasUdalosti, new NacitajPremium(simCasUdalosti, wb));
+            }
+
         }
 
         private void NasledujucaPoZautocVTurme()
@@ -368,7 +427,7 @@ namespace Glad
             else
             {
                 var najlepsiHrac = NajviacZlataZHraca(db);
-                if (najlepsiHrac.Premia == "40194")
+                if (int.Parse(najlepsiHrac.Premia) > 40000)
                 {
                     Logovanie.LogujText(string.Format("Pripad 1. - {0} - {1}", najlepsiHrac.Protivnik, najlepsiHrac.Premia));
                     return protivnici.Find(x => x.MenoHraca == najlepsiHrac.Protivnik);
@@ -434,7 +493,7 @@ namespace Glad
 
             foreach (var protivnik in protivnici)
             {
-                if (int.Parse(protivnik.Premia.Replace(".","")) >= max)
+                if (int.Parse(protivnik.Premia.Replace(".", "")) >= max && protivnici.Where(x => x.Datum == DateTime.Today).Count(x => x.Protivnik == protivnik.Protivnik) < 5)
                 {
                     max = int.Parse(protivnik.Premia.Replace(".", ""));
                     hladanyHrac = protivnik;
@@ -545,15 +604,10 @@ namespace Glad
 
         private void NasledujucaPoPonukniNaAukcii()
         {
-            var simCasUdalosti = SimCas + new TimeSpan(0, 0, 1);
-            if (!JePonuknute)
+            var simCasUdalosti = SimCas + new TimeSpan(0, 0, 2);
+            if (UkladajZlato && Zlato > 25800)
             {
-                KalendarUdalosti.Add(simCasUdalosti, new NacitajItemVAukcii(simCasUdalosti, wb, "6"));
-            }
-            else if (UkladajZlato && Zlato > 35800)
-            {
-                simCasUdalosti = SimCas + new TimeSpan(0, 0, 2);
-                KalendarUdalosti.Add(simCasUdalosti, new PonukniNaAukcii(simCasUdalosti, wb, this));
+                KalendarUdalosti.Add(simCasUdalosti, new PonukniNaAukcii(simCasUdalosti, wb, this, Zlato));
             }
 
             else
@@ -566,28 +620,34 @@ namespace Glad
             }
         }
 
+        private void NasledujucaPoNeboloPonuknuteVAukcii()
+        {
+            _indexZalohovania++;
+            var simCasUdalosti = SimCas + new TimeSpan(0, 0, 1);
+            KalendarUdalosti.Add(simCasUdalosti, new NacitajItemVAukcii(simCasUdalosti, wb, PoradieZalohovania[_indexZalohovania]));
+        }
+
         private void NasledujucaPoNacitajItemVAukcii()
         {
             var simCasUdalosti = SimCas + new TimeSpan(0, 0, 2);
-            KalendarUdalosti.Add(simCasUdalosti, new PonukniNaAukcii(simCasUdalosti, wb, this));
+            KalendarUdalosti.Add(simCasUdalosti, new PonukniNaAukcii(simCasUdalosti, wb, this, Zlato));
         }
 
         private void NasledujucaPoNacitajAukcnuBudovu()
         {
             var simCasUdalosti = SimCas + new TimeSpan(0, 0, 2);
-            KalendarUdalosti.Add(simCasUdalosti, new NacitajItemVAukcii(simCasUdalosti, wb, "9"));
+            KalendarUdalosti.Add(simCasUdalosti, new NacitajItemVAukcii(simCasUdalosti, wb, PoradieZalohovania[_indexZalohovania]));
         }
 
         private void NasledujucaPoZautocNaExpedicii()
         {
             Random rand = new Random();
 
-            var simCasUdalosti = SimCas + new TimeSpan(0, 5, 10 + rand.Next(80));
-            KalendarUdalosti.Add(simCasUdalosti, new NacitajLokaciu(simCasUdalosti, wb, Lokacia));
+            var simCasUdalosti = SimCas + new TimeSpan(0, 5, 10 + rand.Next(60));
 
-            if (ExpBody == 0)
+            if (ExpBody > 0)
             {
-                KalendarUdalosti.Clear();
+                KalendarUdalosti.Add(simCasUdalosti, new NacitajLokaciu(simCasUdalosti, wb, Lokacia));
             }
 
             if (UkladajZlato && Zlato > 30800)
@@ -628,7 +688,7 @@ namespace Glad
             {
                 if (vysledok == "jalcisko" || vysledok == "Lukass")
                 {
-                    if (item.GetAttribute("className") == "title2_inner")
+                    if (item.GetAttribute("className") == "report_reward")
                     {
                         var riadky = item.GetElementsByTagName("p");
 

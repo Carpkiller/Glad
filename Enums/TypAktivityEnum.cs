@@ -3,10 +3,12 @@
     public enum TypAktivityEnum
     {
         InicializacnaUdalost,
+        NaplanujDalsieUdalosti,
         NacitajLokaciu,
         NacitajItemVAukcii,
         NacitajAukcnuBudovu,
         PonukniNaAukcii,
+        NeboloPonuknuteVAukcii,
         NacitajInventar,
         NacitajPremium,
         AktivujElixir,

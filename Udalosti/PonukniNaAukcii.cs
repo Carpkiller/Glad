@@ -9,14 +9,16 @@ namespace Glad.Udalosti
         List<Ponuka> listPonuk;
         List<HtmlElement> listElementov;
         Jadro _jadro;
+        private int _zlato;
 
-        public PonukniNaAukcii(TimeSpan cas, WebBrowser webBrowser, Jadro jadro)
+        public PonukniNaAukcii(TimeSpan cas, WebBrowser webBrowser, Jadro jadro, int zlato)
         {
             CasSimulacie = cas;
             wb = webBrowser;
             TypAktivity = TypAktivityEnum.PonukniNaAukcii;
             _jadro = jadro;
             BlokujucaUdalost = BlokujucaUdalostEnum.Aukcia;
+            _zlato = zlato;
         }
 
         public override void Vykonaj()
@@ -24,7 +26,7 @@ namespace Glad.Udalosti
             var t = wb.Document.GetElementById("auction_table");
             ParsujItemy(t.GetElementsByTagName("tr"));
 
-            for (int i = 0; i < listPonuk.Count; i++)
+            for (int i = listPonuk.Count-1; i >= 0; i--)
             {
                 if (listPonuk[i].NajnizsiaPonuka > listPonuk[i].Cena && listPonuk[i].Volny)
                 {
