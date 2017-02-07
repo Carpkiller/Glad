@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Glad
@@ -21,7 +22,8 @@ namespace Glad
             LogujText("=== Vystup z DB ====");
             foreach (var zaznam in db)
             {
-                LogujText(string.Format("{0} - {1}",zaznam.Protivnik, zaznam.Premia));
+                LogujText(string.Format("{0} - {1} , {2} - {3}", zaznam.Protivnik, zaznam.Premia, zaznam.Datum,
+                    zaznam.Datum == DateTime.Today));
             }
         }
 

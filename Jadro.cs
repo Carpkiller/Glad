@@ -753,27 +753,19 @@ namespace Glad
                 }
             }
 
-            foreach (HtmlElement item in report)
+            if (vysledok == "jalcisko" || vysledok == "Lukass")
             {
-                if (vysledok == "jalcisko" || vysledok == "Lukass")
+                foreach (HtmlElement item in report)
                 {
                     if (item.GetAttribute("className") == "report_reward")
                     {
-                        var podele = item.GetElementsByTagName("div");
+                        var riadky = item.GetElementsByTagName("p");
 
-                        foreach (HtmlElement poditem in podele)
-                        {
-                            if (poditem.GetAttribute("className") == "title2_inner")
-                            {
-                                var riadky = item.GetElementsByTagName("p");
+                        var slova = riadky[0].OuterText.Split(' ');
 
-                                var slova = riadky[0].OuterText.Split(' ');
-
-                                zlato = slova[2].Replace(".", "");
-                                premia = slova[10].Replace(".", "");
-                                break;
-                            }
-                        }
+                        zlato = slova[2].Replace(".", "");
+                        premia = slova[10].Replace(".", "");
+                        break;
                     }
                 }
             }
