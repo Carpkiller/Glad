@@ -28,7 +28,7 @@ namespace Glad.Udalosti
 
             for (int i = listPonuk.Count-1; i >= 0; i--)
             {
-                if (listPonuk[i].NajnizsiaPonuka > listPonuk[i].Cena && listPonuk[i].Volny)
+                if (listPonuk[i].NajnizsiaPonuka > listPonuk[i].Cena && _zlato > listPonuk[i].NajnizsiaPonuka && listPonuk[i].Volny)
                 {
                     var tlacPonukni = listElementov[i];
                     tlacPonukni.InvokeMember("Click");
