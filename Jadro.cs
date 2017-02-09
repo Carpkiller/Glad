@@ -198,7 +198,10 @@ namespace Glad
         {
             if (KalendarUdalosti.Count > 0)
             {
-                predchAktiv = KalendarUdalosti.First().Value.TypAktivity;
+                if (predchAktiv == TypAktivityEnum.Refresh)
+                {
+                    predchAktiv = KalendarUdalosti.First().Value.TypAktivity;
+                }
                 KalendarUdalosti.RemoveAt(0);
             }
 
@@ -625,8 +628,9 @@ namespace Glad
         private void NasledujucaPoNeboloPonuknuteVAukcii()
         {
             _indexZalohovania++;
-            var simCasUdalosti = SimCas + new TimeSpan(0, 0, 1);
+            var simCasUdalosti = SimCas + new TimeSpan(0, 0, 0);
             KalendarUdalosti.Add(simCasUdalosti, new NacitajItemVAukcii(simCasUdalosti, wb, PoradieZalohovania[_indexZalohovania]));
+            JePonuknute = true;
         }
 
         private void NasledujucaPoNacitajItemVAukcii()
@@ -645,7 +649,7 @@ namespace Glad
         {
             Random rand = new Random();
 
-            var simCasUdalosti = SimCas + new TimeSpan(0, 5, 10 + rand.Next(60));
+            var simCasUdalosti = SimCas + new TimeSpan(0, 5, 10 + rand.Next(10));
 
             if (ExpBody > 0)
             {

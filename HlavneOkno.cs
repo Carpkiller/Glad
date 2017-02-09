@@ -97,6 +97,7 @@ namespace Glad
         private void button4_Click(object sender, EventArgs e)
         {
             _jadro.SimulaciaBezi = false;
+            _jadro.KalendarUdalosti.Clear();
         }
 
         private void button5_Click(object sender, EventArgs e)
