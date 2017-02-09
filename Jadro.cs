@@ -255,11 +255,19 @@ namespace Glad
                 case TypAktivityEnum.NacitajTurmu:
                     NasledujucaPoNacitajTurmu();
                     break;
+                case TypAktivityEnum.AktivujElixir:
+                    NasledujucaPoAktivujElixir();
+                    break;
             }
             Naplanova = false;
 
             if (ZmenaKalendarUdalosti != null) //vyvolani udalosti
                 ZmenaKalendarUdalosti();
+        }
+
+        private void NasledujucaPoAktivujElixir()
+        {
+            dovodBlokacieSimulacie = BlokujucaUdalostEnum.Ziadna;
         }
 
         private void NasledujucaPoNacitajTurmu()
@@ -621,6 +629,10 @@ namespace Glad
                 {
                     simCasUdalosti = SimCas + new TimeSpan(0, 0, 5);
                     KalendarUdalosti.Add(simCasUdalosti, new NacitajPremium(simCasUdalosti, wb));
+                }
+                else
+                {
+                    dovodBlokacieSimulacie = BlokujucaUdalostEnum.Ziadna;
                 }
             }
         }
