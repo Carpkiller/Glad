@@ -18,15 +18,23 @@ namespace Glad.Udalosti
 
         public override void Vykonaj()
         {
-            var c = wb.Document.GetElementById("submenu2").GetElementsByTagName("a");    // nacitacnie aukcnej budovy
-            foreach (HtmlElement item in c)
+            if (_lokacia == string.Empty)
             {
-                Console.WriteLine(item.OuterText);
-                if (item.OuterText != null && item.OuterText.Contains(_lokacia))
-                {
-                    item.InvokeMember("Click");
-                }
+                var c = wb.Document.GetElementById("cooldown_bar_expedition").GetElementsByTagName("a");
+                c[0].InvokeMember("Click");
             }
+            else
+            {
+                var c = wb.Document.GetElementById("submenu2").GetElementsByTagName("a");    // nacitacnie aukcnej budovy
+                foreach (HtmlElement item in c)
+                {
+                    Console.WriteLine(item.OuterText);
+                    if (item.OuterText != null && item.OuterText.Contains(_lokacia))
+                    {
+                        item.InvokeMember("Click");
+                    }
+                }
+            }            
         }
     }
 }

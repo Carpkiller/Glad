@@ -635,6 +635,7 @@ namespace Glad
                     dovodBlokacieSimulacie = BlokujucaUdalostEnum.Ziadna;
                 }
             }
+            _indexZalohovania = 0;
         }
 
         private void NasledujucaPoNeboloPonuknuteVAukcii()
@@ -665,7 +666,7 @@ namespace Glad
 
             if (ExpBody > 0)
             {
-                KalendarUdalosti.Add(simCasUdalosti, new NacitajLokaciu(simCasUdalosti, wb, Lokacia));
+                KalendarUdalosti.Add(simCasUdalosti, new NacitajLokaciu(simCasUdalosti, wb, string.Empty));
             }
 
             if (UkladajZlato && Zlato > 30800)
