@@ -798,13 +798,19 @@ namespace Glad
 
         internal void AktualizujSystemovePremenne()
         {
-            CasExpedicie = wb.Document.GetElementById("cooldown_bar_expedition").InnerText.Replace("\r\n", "");
-            CasAreny = wb.Document.GetElementById("cooldown_bar_arena").InnerText.Replace("\r\n", "");
-            CasZalaru = wb.Document.GetElementById("cooldown_bar_dungeon").InnerText.Replace("\r\n", "");
-            CasTurmy = wb.Document.GetElementById("cooldown_bar_ct").InnerText.Replace("\r\n", "");
-            Zivoty = wb.Document.GetElementById("header_values_hp_percent").InnerText;
-            ExpBody = int.Parse(wb.Document.GetElementById("expeditionpoints_value_point").InnerText);
-            Zlato = int.Parse(wb.Document.GetElementById("sstat_gold_val").InnerText.Replace(".", ""));
+            try
+            {
+                CasExpedicie = wb.Document.GetElementById("cooldown_bar_expedition").InnerText.Replace("\r\n", "");
+                CasAreny = wb.Document.GetElementById("cooldown_bar_arena").InnerText.Replace("\r\n", "");
+                CasZalaru = wb.Document.GetElementById("cooldown_bar_dungeon").InnerText.Replace("\r\n", "");
+                CasTurmy = wb.Document.GetElementById("cooldown_bar_ct").InnerText.Replace("\r\n", "");
+                Zivoty = wb.Document.GetElementById("header_values_hp_percent").InnerText;
+                ExpBody = int.Parse(wb.Document.GetElementById("expeditionpoints_value_point").InnerText);
+                Zlato = int.Parse(wb.Document.GetElementById("sstat_gold_val").InnerText.Replace(".", ""));
+            }
+            catch (Exception)
+            {
+            }            
         }
     }
 }

@@ -55,8 +55,8 @@ namespace Glad.Udalosti
 
                     if (y.Length > 1)
                     {
-                        var najnizsiaPonuka = y[10].Split(':')[1].Trim().Replace(".", "");
-                        var cena = y[12].Split(' ')[1].Replace(".", "");
+                        var najnizsiaPonuka = y[9].Split(':')[1].Trim().Replace(".", "");
+                        var cena = y[11].Split(' ')[1].Replace(".", "");
 
                         listPonuk.Add(new Ponuka(cena, najnizsiaPonuka, cena, divs[7].GetElementsByTagName("a").Count == 0 && divs[7].GetElementsByTagName("span").Count == 0));
                         listElementov.Add(tt[7]);
