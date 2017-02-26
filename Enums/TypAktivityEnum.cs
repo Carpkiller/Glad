@@ -5,6 +5,7 @@
         InicializacnaUdalost,
         NaplanujDalsieUdalosti,
         NacitajLokaciu,
+        NacitajZalar,
         NacitajItemVAukcii,
         NacitajAukcnuBudovu,
         PonukniNaAukcii,
@@ -17,6 +18,7 @@
         NacitajArenuProvinciarum,
         NacitajTurmuProvinciarum,
         ZautocNaExpedicii,
+        ZautocVZalari,
         ZautocVArene,
         ZautocVTurme,
         Refresh

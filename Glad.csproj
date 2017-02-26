@@ -73,6 +73,7 @@
     <Compile Include="Udalosti\NacitajPremium.cs" />
     <Compile Include="Udalosti\NacitajTurmu.cs" />
     <Compile Include="Udalosti\NacitajTurmuProvinciarum.cs" />
+    <Compile Include="Udalosti\NacitajZalar.cs" />
     <Compile Include="Udalosti\PonukniNaAukcii.cs" />
     <Compile Include="Udalosti\ZautocVArene.cs" />
     <Compile Include="Udalosti\ZautocVTurme.cs" />
@@ -85,6 +86,7 @@
     <Compile Include="Enums\TypAktivityEnum.cs" />
     <Compile Include="Udalost.cs" />
     <Compile Include="Udalosti\ZautocNaExpedicii.cs" />
+    <Compile Include="Udalosti\ZautocVZalari.cs" />
     <Compile Include="Zaznam.cs" />
     <EmbeddedResource Include="HlavneOkno.resx">
       <DependentUpon>HlavneOkno.cs</DependentUpon>

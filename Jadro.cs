@@ -20,6 +20,7 @@ namespace Glad
         public int Zlato { get; set; }
         public string Hrac { get; set; }
         public int ExpBody { get; set; }
+        public int ZalaroveBody { get; set; }
         public string Zivoty { get; set; }
         public string CasAreny { get; set; }
         public string CasTurmy { get; set; }
@@ -258,11 +259,28 @@ namespace Glad
                 case TypAktivityEnum.AktivujElixir:
                     NasledujucaPoAktivujElixir();
                     break;
+                case TypAktivityEnum.NacitajZalar:
+                    NasledujucaPoNacitajZalar();
+                    break;
+                case TypAktivityEnum.ZautocVZalari:
+                    NasledujucaPoZautocVZalari();
+                    break;
             }
             Naplanova = false;
 
             if (ZmenaKalendarUdalosti != null) //vyvolani udalosti
                 ZmenaKalendarUdalosti();
+        }
+
+        private void NasledujucaPoZautocVZalari()
+        {
+            dovodBlokacieSimulacie = BlokujucaUdalostEnum.Ziadna;
+        }
+
+        private void NasledujucaPoNacitajZalar()
+        {
+            var simCasUdalosti = SimCas + new TimeSpan(0, 0, 1);
+            KalendarUdalosti.Add(simCasUdalosti, new ZautocVZalari(simCasUdalosti, wb));
         }
 
         private void NasledujucaPoAktivujElixir()
@@ -664,6 +682,12 @@ namespace Glad
 
             var simCasUdalosti = SimCas + new TimeSpan(0, 5, 10 + rand.Next(10));
 
+            if (int.Parse(Zivoty.Replace("%", "")) < 5)
+            {
+                simCasUdalosti = SimCas + new TimeSpan(0, 0, 5);
+                KalendarUdalosti.Add(simCasUdalosti, new NacitajPremium(simCasUdalosti, wb));
+            }
+
             if (ExpBody > 0)
             {
                 KalendarUdalosti.Add(simCasUdalosti, new NacitajLokaciu(simCasUdalosti, wb, string.Empty));
@@ -671,8 +695,14 @@ namespace Glad
 
             if (UkladajZlato && Zlato > 30800)
             {
-                simCasUdalosti = SimCas + new TimeSpan(0, 0, 1);
+                simCasUdalosti = SimCas + new TimeSpan(0, 0, 3);
                 KalendarUdalosti.Add(simCasUdalosti, new NacitajAukcnuBudovu(simCasUdalosti, wb));
+            }
+
+            if (KlikajZalar && ZalaroveBody > 0)
+            {
+                simCasUdalosti = SimCas + new TimeSpan(0, 0, 1);
+                KalendarUdalosti.Add(simCasUdalosti, new NacitajZalar(simCasUdalosti, wb));
             }
 
             dovodBlokacieSimulacie = BlokujucaUdalostEnum.Ziadna;
@@ -806,6 +836,7 @@ namespace Glad
                 CasTurmy = wb.Document.GetElementById("cooldown_bar_ct").InnerText.Replace("\r\n", "");
                 Zivoty = wb.Document.GetElementById("header_values_hp_percent").InnerText;
                 ExpBody = int.Parse(wb.Document.GetElementById("expeditionpoints_value_point").InnerText);
+                ZalaroveBody = int.Parse(wb.Document.GetElementById("dungeonpoints_value_point").InnerText);
                 Zlato = int.Parse(wb.Document.GetElementById("sstat_gold_val").InnerText.Replace(".", ""));
             }
             catch (Exception)
