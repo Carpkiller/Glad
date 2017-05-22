@@ -23,7 +23,7 @@ namespace Glad
             foreach (var zaznam in db)
             {
                 LogujText(string.Format("{0} - {1} , {2} - {3}", zaznam.Protivnik, zaznam.Premia, zaznam.Datum,
-                    zaznam.Datum == DateTime.Today));
+                    zaznam.Datum.Date == DateTime.Today));
             }
         }
 
