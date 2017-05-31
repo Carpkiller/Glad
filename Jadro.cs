@@ -281,6 +281,20 @@ namespace Glad
 
         private void NasledujucaPoZautocVZalari()
         {
+
+            Random rand = new Random();
+
+            var simCasUdalosti = SimCas + new TimeSpan(0, 5, 5 + rand.Next(10));
+
+            if (ExpBody == 0 && ZalaroveBody > 0)
+            {
+                KalendarUdalosti.Add(simCasUdalosti, new NacitajZalar(simCasUdalosti, wb));
+            }
+            else if (ExpBody > 0 && ZalaroveBody > 0)
+            {
+                KalendarUdalosti.Add(simCasUdalosti, new NacitajLokaciu(simCasUdalosti, wb, string.Empty));
+            }
+
             dovodBlokacieSimulacie = BlokujucaUdalostEnum.Ziadna;
         }
 
