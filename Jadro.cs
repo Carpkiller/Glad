@@ -290,7 +290,7 @@ namespace Glad
             {
                 KalendarUdalosti.Add(simCasUdalosti, new NacitajZalar(simCasUdalosti, wb));
             }
-            else if (ExpBody > 0 && ZalaroveBody > 0)
+            else if (ExpBody > 0 && ZalaroveBody > 0 && !ObsahujeUdalost(KalendarUdalosti, new NacitajLokaciu(SimCas, null, null)))
             {
                 KalendarUdalosti.Add(simCasUdalosti, new NacitajLokaciu(simCasUdalosti, wb, string.Empty));
             }
@@ -927,6 +927,19 @@ namespace Glad
             catch (Exception)
             {
             }            
+        }
+
+        public static bool ObsahujeUdalost(SortedList<TimeSpan, Udalost> kalendarUdalosti, Udalost udalost)
+        {
+            foreach (var kalUdalost in kalendarUdalosti.Values)
+            {
+                if (kalUdalost.TypAktivity == udalost.TypAktivity)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
