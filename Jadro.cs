@@ -476,7 +476,25 @@ namespace Glad
             Protivnik = NajdiNajvhodnejsiehoProtivnikaTurma(protivnici);
 
             var simCasUdalosti = SimCas + new TimeSpan(0, 0, 1);
-            KalendarUdalosti.Add(simCasUdalosti, new ZautocVTurme(simCasUdalosti, wb, Protivnik));
+
+            if (Protivnik == null)
+            {
+                Protivnik = ReloadSuperovTurma();
+                KalendarUdalosti.Add(simCasUdalosti, new ZautocVTurme(simCasUdalosti, wb, Protivnik));
+            }
+            else
+            {
+                KalendarUdalosti.Add(simCasUdalosti, new ZautocVTurme(simCasUdalosti, wb, Protivnik));
+            }            
+        }
+
+        private HracArena ReloadSuperovTurma()
+        {
+            var res = new HracArena();
+
+            res.ButtonUtok = wb.Document.GetElementsByTagName("form").GetElementsByName("actionButton")[0];
+
+            return res;
         }
 
         private HracArena NajdiNajvhodnejsiehoProtivnikaTurma(List<HracArena> protivnici)
@@ -555,19 +573,24 @@ namespace Glad
                 }
                 else
                 {
-                    var pomResult = new List<Zaznam>();
-                    foreach (var item in db)
-                    {
-                        if (db.Where(x => x.Datum.Date == DateTime.Today).Count(x => x.Protivnik == item.Protivnik) < 5)
-                        {
-                            Logovanie.LogujText(string.Format("Pridanie hraca na pom. zoznam hraca - {0}", item.Protivnik));
-                            pomResult.Add(item);
-                        }
-                    }
+                    var znamky = OznamkujHracov(db, protivnici);
+                    //var pomResult = new List<Zaznam>();
+                    //foreach (var item in db)
+                    //{
+                    //    if (db.Where(x => x.Datum.Date == DateTime.Today).Count(x => x.Protivnik == item.Protivnik) < 5)
+                    //    {
+                    //        Logovanie.LogujText(string.Format("Pridanie hraca na pom. zoznam hraca - {0}", item.Protivnik));
+                    //        pomResult.Add(item);
+                    //    }
+                    //}
 
-                    var najlepsiHrac = NajviacZlataZHraca(pomResult);
-                    Logovanie.LogujText(string.Format("Pripad 1. - {0} - {1}", najlepsiHrac.Protivnik, najlepsiHrac.Premia));
-                    return protivnici.Find(x => x.MenoHraca == najlepsiHrac.Protivnik);
+                    //var najlepsiHrac = NajviacZlataZHraca(pomResult);
+                    //Logovanie.LogujText(string.Format("Pripad 1. - {0} - {1}", najlepsiHrac.Protivnik, najlepsiHrac.Premia));
+                    if (znamky.Count() == 0)
+                    {
+                        return null;
+                    }
+                    return protivnici.Find(x => x.MenoHraca == znamky.OrderByDescending(y => y.Hodnotenie).First().MenoHraca);
                 }
             }
             catch (Exception e)
@@ -576,6 +599,111 @@ namespace Glad
             }
 
             return NajblizsiLevel(protivnici);
+        }
+
+        private List<HodnotenieHracov> OznamkujHracov(List<Zaznam> db, List<HracArena> protivnici)
+        {
+            var result = new List<HodnotenieHracov>();
+
+            foreach (var item in protivnici.Select(x => x.MenoHraca))
+            {
+                result.Add(new HodnotenieHracov(item));
+            }
+
+            // bitky dnes
+            foreach (var item in result)
+            {
+                if (db.Count(x => x.Datum.Date == DateTime.Today && x.Protivnik == item.MenoHraca) < 5)
+                {
+                    item.Hodnotenie = 10 - db.Count(x => x.Datum.Date == DateTime.Today && x.Protivnik == item.MenoHraca);
+                }
+                else
+                {
+                    item.Hodnotenie = -1;
+                }
+            }
+
+            result = OdstranZleZaznamy(result);
+
+            if (result.Count == 0)
+            {
+                return result;
+            }
+
+            // vyhry/prehry
+            foreach (var item in result)
+            {
+                if (db.Where(x => x.Datum > DateTime.Today.AddDays(-10)).Count(y => y.Vitaz != Hrac && y.Protivnik == item.MenoHraca)>0)
+                {
+                    Logovanie.LogujText(string.Format("Vyhry/prehry {0}  zapasy - {1}, vyhry - {2}, prehry - {3}", item.MenoHraca, db.Where(x => x.Datum > DateTime.Today.AddDays(-10)).Count(y => y.Protivnik == item.MenoHraca),
+                        db.Where(x => x.Datum > DateTime.Today.AddDays(-10)).Count(x => x.Vitaz == Hrac && x.Protivnik == item.MenoHraca), db.Where(x => x.Datum > DateTime.Today.AddDays(-10)).Count(x => x.Vitaz != Hrac && x.Protivnik == item.MenoHraca)));
+                    item.Hodnotenie = -1;
+                }
+            }
+
+            result = OdstranZleZaznamy(result);
+            if (result.Count == 0)
+            {
+                return result;
+            }
+
+            // zlato
+            foreach (var item in result)
+            {
+                try
+                {
+                    var pocetBojov = db.Where(x => x.Datum > DateTime.Today.AddDays(-10) && x.Protivnik == item.MenoHraca).Count();
+                    var ziskaneZlato = db.Where(x => x.Datum > DateTime.Today.AddDays(-10) && x.Protivnik == item.MenoHraca).Sum(y => int.Parse(y.Zlato));
+
+                    var zlato = ziskaneZlato / pocetBojov;
+
+                    item.Hodnotenie += zlato / 1000;
+                }
+                catch (DivideByZeroException e)
+                {
+                    item.Hodnotenie += 10;
+                }
+                
+            }
+
+            var optimalizovanyResult = OptimalizaciaVysledkov(result);
+
+            if (optimalizovanyResult.Count > 0)
+            {
+                return optimalizovanyResult;
+            }
+
+            return result;
+        }
+
+        private List<HodnotenieHracov> OptimalizaciaVysledkov(List<HodnotenieHracov> input)
+        {
+            var result = new List<HodnotenieHracov>();
+
+            foreach (var item in input)
+            {
+                if (item.Hodnotenie == 20)
+                {
+                    result.Add(item);
+                }
+            }
+
+            return result;
+        }
+
+        private List<HodnotenieHracov> OdstranZleZaznamy(List<HodnotenieHracov> input)
+        {
+            var result = new List<HodnotenieHracov>();
+
+            foreach (var item in input)
+            {
+                if (item.Hodnotenie >= 0)
+                {
+                    result.Add(item);
+                }
+            }
+
+            return result;
         }
 
         private HracArena NajblizsiLevel(List<HracArena> protivnici)
@@ -671,16 +799,21 @@ namespace Glad
         {
             List<HracArena> res = new List<HracArena>();
             var loc = wb.Document.GetElementById("own3").GetElementsByTagName("tr");
-
+            Logovanie.LogujText(loc.Count.ToString());
             for (int i = 1; i < loc.Count; i++)
             {
                 var riadok = loc[i].GetElementsByTagName("td");
+                Logovanie.LogujText(riadok.Count.ToString());
+                Logovanie.LogujText(riadok[0].OuterText.Trim());
+                Logovanie.LogujText(riadok[1].OuterText.Trim());
+                Logovanie.LogujText(riadok[2].OuterText.Trim());
+                Logovanie.LogujText(riadok[3].GetElementsByTagName("div").Count.ToString());
                 var hracArena = new HracArena
                 {
                     MenoHraca = riadok[0].OuterText.Trim(),
                     Uroven = riadok[1].OuterText.Trim(),
                     Server = riadok[2].OuterText.Trim(),
-                    ButtonUtok = riadok[3].GetElementsByTagName("span")[0]
+                    ButtonUtok = riadok[3].GetElementsByTagName("div")[0]
                 };
                 res.Add(hracArena);
             }

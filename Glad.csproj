@@ -61,6 +61,7 @@
     <Compile Include="HlavneOkno.Designer.cs">
       <DependentUpon>HlavneOkno.cs</DependentUpon>
     </Compile>
+    <Compile Include="Hodnotenie.cs" />
     <Compile Include="HracArena.cs" />
     <Compile Include="Jadro.cs" />
     <Compile Include="Logovanie.cs" />

@@ -22,8 +22,8 @@ namespace Glad
             LogujText("=== Vystup z DB ====");
             foreach (var zaznam in db)
             {
-                LogujText(string.Format("{0} - {1} , {2} - {3}", zaznam.Protivnik, zaznam.Premia, zaznam.Datum,
-                    zaznam.Datum.Date == DateTime.Today));
+                LogujText(string.Format("{0} - {1} , {2} - {3} - {4}", zaznam.Protivnik, zaznam.Premia, zaznam.Datum,
+                    zaznam.Datum.Date == DateTime.Today, zaznam.Vitaz));
             }
         }
 
