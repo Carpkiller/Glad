@@ -72,7 +72,7 @@ namespace Glad
             label11.Text = _jadro.CasAreny.ToString();
             label13.Text = _jadro.CasExpedicie.ToString();
             _jadro.UkladajZlato = checkBox1.Checked;
-                       
+            _jadro.SkontrolujObchod();     
 
             if (_jadro.SimulaciaBezi && _jadro.Naplanova)
             {

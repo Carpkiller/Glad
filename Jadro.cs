@@ -611,17 +611,17 @@ namespace Glad
             }
 
             // bitky dnes
-            foreach (var item in result)
-            {
-                if (db.Count(x => x.Datum.Date == DateTime.Today && x.Protivnik == item.MenoHraca) < 5)
-                {
-                    item.Hodnotenie = 10 - db.Count(x => x.Datum.Date == DateTime.Today && x.Protivnik == item.MenoHraca);
-                }
-                else
-                {
-                    item.Hodnotenie = -1;
-                }
-            }
+            //foreach (var item in result)
+            //{
+            //    if (db.Count(x => x.Datum.Date == DateTime.Today && x.Protivnik == item.MenoHraca) < 5)
+            //    {
+            //        item.Hodnotenie = 10 - db.Count(x => x.Datum.Date == DateTime.Today && x.Protivnik == item.MenoHraca);
+            //    }
+            //    else
+            //    {
+            //        item.Hodnotenie = -1;
+            //    }
+            //}
 
             result = OdstranZleZaznamy(result);
 
@@ -1073,6 +1073,33 @@ namespace Glad
             }
 
             return false;
+        }
+
+        private string FarbaZeleny = "lime";
+        private string FarbaModry = "#5159F7";
+        private string FarbaOranzovy = "#FF6A00";
+        private string FarbaCerveny = "#FF0000";
+        private string FarbaBiely = "white";
+        private string FarbaRuzovy = "#E303E0";
+
+        internal void SkontrolujObchod()
+        {
+            if (wb.Url.AbsoluteUri.Contains("mod=inventory") && !wb.Url.AbsoluteUri.Contains("subsub=2"))
+            {
+                var obchod = wb.Document.GetElementById("shop");
+                if (obchod.InnerHtml.Contains(FarbaOranzovy))
+                {
+                    MessageBox.Show("V obchode sa nachadza oranzovy predmet");
+                }
+                if (obchod.InnerHtml.Contains(FarbaCerveny))
+                {
+                    MessageBox.Show("V obchode sa nachadza cerveny predmet");
+                }
+                if (obchod.InnerHtml.Contains(FarbaRuzovy))
+                {
+                    MessageBox.Show("V obchode sa nachadza ruzovy predmet");
+                }
+            }
         }
     }
 }
