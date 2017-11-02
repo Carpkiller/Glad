@@ -29,7 +29,7 @@ namespace Glad.Udalosti
                 {
                     var q = item.GetElementsByTagName("input");
 
-                    q[1].InvokeMember("Click");                    
+                    q[0].InvokeMember("Click");                    
                 }
             }  
 

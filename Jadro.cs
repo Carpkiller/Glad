@@ -118,7 +118,7 @@ namespace Glad
             if (!Inicializacia)
             {
                 var simCasUdalosti = SimCas + new TimeSpan(0, 0, 1);
-                KalendarUdalosti.Add(simCasUdalosti, new InicializacnaUdalost(simCasUdalosti, wb));
+                KalendarUdalosti.Add(simCasUdalosti, new InicializacnaUdalost(simCasUdalosti, wb));               
             }
             else
             {
@@ -169,6 +169,11 @@ namespace Glad
                 if (!JePonuknute)
                 {
                     NaplanujDalsiuAktivitu(TypAktivityEnum.NeboloPonuknuteVAukcii);
+                }
+
+                if (KalendarUdalosti.First().Value.TypAktivity == TypAktivityEnum.NacitajInventar && KalendarUdalosti.First().Value.CasSimulacie < SimCas)
+                {
+                    KalendarUdalosti.RemoveAt(0);
                 }
 
                 SimCas = SimCas.Add(new TimeSpan(0, 0, 0, 0, 100));
@@ -837,6 +842,8 @@ namespace Glad
         {
             var simCasUdalosti = SimCas + new TimeSpan(0, 0, 1);
             KalendarUdalosti.Add(simCasUdalosti, new NacitajInventar(simCasUdalosti, wb));
+            simCasUdalosti = SimCas + new TimeSpan(0, 0, 5);
+            KalendarUdalosti.Add(simCasUdalosti, new AktivujElixir(simCasUdalosti, wb));
         }
 
         private void NasledujucaPoPonukniNaAukcii()

@@ -24,6 +24,8 @@ namespace Glad.Udalosti
                     item.InvokeMember("Click");
                 }
             }
+
+            //wb.Refresh();
         }
     }
 }
